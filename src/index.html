@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="en"> <head>
   <meta charset="utf-8" />
-  <title>Political Compass</title>
-  <meta name="description" content="A political compass quiz based on 8values." />
+  <title>Political Compass Test - 8values</title>
+  <meta id="meta-description" name="description" content="Take the 8values political compass test to find your ideology." />
+  <meta name="keywords" content="political compass, 8values, political quiz, ideology test, politics, 政治坐标, 意识形态测试, 政治测试" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   <link rel="apple-touch-icon" sizes="57x57" href="favicons/apple-icon-57x57.png" />
@@ -34,43 +34,34 @@
   </a>
 
   <header class="header">
-    <a href="#" class="logo" onclick="location.reload(); return false;"> <img src="images/political-compass-logo.svg" alt="Political Compass" />
-    </a>
-
+    <a href="#" class="logo" onclick="location.reload(); return false;">
+      <img src="images/political-compass-logo.svg" alt="Political Compass Logo" /> </a>
   </header>
-
 
   <div class="content">
     <div class="input">
       <div class="questions">
-        <h4 id="question-label">Question 1 / X</h4>
-        <h1 id="question-title">Loading question...</h1>
+        <h4 id="question-label" data-i18n="questionLabel">Question ... / ...</h4> <h1 id="question-title">Loading question...</h1>
       </div>
       <div class="answers" id="answers">
         <button class="answer" data-value="-1.0" data-i18n-alt="answerAlt.stronglyDisagree">
           <img src="images/disagree-strongly.svg" alt="Strongly Disagree" />
-          <span class="answer-annotation">Strongly Disagree</span>
-        </button>
+          <span class="answer-annotation" data-i18n="answerAlt.stronglyDisagree">Strongly Disagree</span> </button>
         <button class="answer" data-value="-0.5" data-i18n-alt="answerAlt.disagree">
           <img src="images/disagree.svg" alt="Disagree" />
-          <span class="answer-annotation">Disagree</span>
-        </button>
+          <span class="answer-annotation" data-i18n="answerAlt.disagree">Disagree</span> </button>
         <button class="answer" data-value="0.0" data-i18n-alt="answerAlt.neutral">
           <img src="images/neither.svg" alt="Neutral" />
-          <span class="answer-annotation">Neutral</span>
-        </button>
+          <span class="answer-annotation" data-i18n="answerAlt.neutral">Neutral</span> </button>
         <button class="answer" data-value="0.5" data-i18n-alt="answerAlt.agree">
           <img src="images/agree.svg" alt="Agree" />
-          <span class="answer-annotation">Agree</span>
-        </button>
+          <span class="answer-annotation" data-i18n="answerAlt.agree">Agree</span> </button>
         <button class="answer" data-value="1.0" data-i18n-alt="answerAlt.stronglyAgree">
           <img src="images/agree-strongly.svg" alt="Strongly Agree" />
-          <span class="answer-annotation">Strongly Agree</span>
-        </button>
+          <span class="answer-annotation" data-i18n="answerAlt.stronglyAgree">Strongly Agree</span> </button>
       </div>
       <div id="results-area" style="display: none;">
-        <h3 data-i18n="resultsTitle">Your closest match:</h3>
-        <h1 id="ideology-result">Calculating...</h1>
+        <h3 id="resultsTitle" data-i18n="resultsTitle">Your closest match:</h3> <h1 id="ideology-result">Calculating...</h1>
         <button id="back-button" data-i18n="backButton">Back to Start</button>
       </div>
       <div id="loading-error" style="display: none; color: red; margin-top: 1rem;"></div>
@@ -78,17 +69,17 @@
 
     <div class="output">
       <div class="dot" id="dot">
-        <img src="images/target.svg" alt="Your Position" />
-      </div>
+        <img src="images/target.svg" alt="Your Position Indicator" /> </div>
       <canvas class="chart" id="chart"></canvas>
     </div>
   </div>
-  <div class="lang-selector">
-    <button id="lang-en" class="lang-button">English</button><button id="lang-zh" class="lang-button">中文</button>
-  </div>
-</div>
 
-<script src="js/chart.js"></script>
+  <div class="lang-selector">
+    <button id="lang-en" class="lang-button">English</button>
+    <button id="lang-zh" class="lang-button">中文</button>
+  </div>
+  <iframe src="https://miaohancheng.com/donate-page/sample1/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;" frameborder="0" scrolling="no"> </iframe>
+</div> <script src="js/chart.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

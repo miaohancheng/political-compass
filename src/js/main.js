@@ -5,13 +5,16 @@
   const questionTitle = document.getElementById('question-title');
   const answersContainer = document.getElementById('answers');
   const answerButtons = document.querySelectorAll('.answer');
+  const answerAnnotations = document.querySelectorAll('.answer-annotation'); // Get annotation spans
   const resultsArea = document.getElementById('results-area');
   const ideologyResultEl = document.getElementById('ideology-result');
+  const resultsTitleEl = document.getElementById('resultsTitle'); // Get results title H3
   const langEnButton = document.getElementById('lang-en');
   const langZhButton = document.getElementById('lang-zh');
   const backButton = document.getElementById('back-button');
   const loadingErrorEl = document.getElementById('loading-error');
   const htmlEl = document.documentElement; // For setting lang attribute
+  const metaDescriptionEl = document.getElementById('meta-description'); // For SEO
 
   // --- State Variables ---
   let currentQuestionIndex = 0;
@@ -65,9 +68,9 @@
     showLoadingError(`Loading data for ${lang}...`); // Show loading message
     try {
       const [questionsRes, ideologiesRes, localeRes] = await Promise.all([
-        fetch('config/questions.json'),
-        fetch('config/ideologies.json'),
-        fetch(`locales/${lang}.json`)
+        fetch('config/questions.json'), // Load updated questions
+        fetch('config/ideologies.json'), // Load ideologies (should be same as before)
+        fetch(`locales/${lang}.json`)    // Load selected language
       ]);
 
       // Check all responses
@@ -85,12 +88,12 @@
 
       // Only calculate max scores if questions loaded successfully
       if (questions && questions.length > 0) {
-          calculateMaxScores();
+          calculateMaxScores(); // Recalculate based on potentially new questions
       } else {
           throw new Error("Questions data is empty or invalid.");
       }
 
-      applyTranslations(); // Apply translations after loading locale
+      applyTranslations(); // Apply translations AFTER loading locale
       console.log("Data loaded successfully:", { questions_count: questions.length, ideologies_count: ideologies.length, locale: lang });
       showLoadingError(null); // Clear loading message
 
@@ -135,12 +138,21 @@
       if (lang === currentLang) return;
       console.log(`Switching language to: ${lang}`);
       try {
-          await loadConfigAndLocale(lang); // Reload locale and config (config shouldn't change but good practice)
+          // Only need to reload locale, config (questions/ideologies) is language-independent
+          const localeRes = await fetch(`locales/${lang}.json`);
+          if (!localeRes.ok) throw new Error(`Failed to load locale ${lang}.json (Status: ${localeRes.status})`);
+          localeData = await localeRes.json();
+          currentLang = lang;
+          localStorage.setItem('preferredLang', lang);
+          htmlEl.lang = lang;
+
+          applyTranslations(); // Apply new translations
+
           // Reload current question/results view in new language
           if (currentQuestionIndex >= questions.length) {
-              showResults(); // If already on results page, re-render results
+              showResults(); // If already on results page, re-render results in new language
           } else {
-              loadQuestion(currentQuestionIndex); // Reload current question
+              loadQuestion(currentQuestionIndex); // Reload current question text
           }
           // Update chart labels via event
           window.dispatchEvent(new CustomEvent('languageChanged', { detail: { localeData: localeData } }));
@@ -159,62 +171,58 @@
           return;
       }
       // Update page title
-      document.title = localeData.title || 'Political Compass';
+      document.title = localeData.title || 'Political Compass Test'; // Use new default title
 
-      // Translate elements with data-i18n attribute
+      // Update meta description if element and locale data exist
+      if (metaDescriptionEl && localeData.description) {
+          metaDescriptionEl.setAttribute('content', localeData.description);
+      } else if (metaDescriptionEl) {
+          // Provide a basic fallback if locale description is missing
+          metaDescriptionEl.setAttribute('content', 'Take the 8values political compass test to find your ideology.');
+      }
+
+      // Translate elements with data-i18n attribute (like buttons, labels)
       document.querySelectorAll('[data-i18n]').forEach(el => {
           const key = el.getAttribute('data-i18n');
+          const translation = localeData[key];
           // Basic check for key existence
-          el.innerText = localeData[key] !== undefined ? localeData[key] : `Missing: ${key}`;
+          el.innerText = translation !== undefined ? translation : `Missing: ${key}`;
       });
 
-       // Translate alt text for elements with data-i18n-alt
+       // Translate alt text for elements with data-i18n-alt (answer button images)
        document.querySelectorAll('[data-i18n-alt]').forEach(el => {
             const keyPath = el.getAttribute('data-i18n-alt');
-            // Basic nested key access (e.g., "answerAlt.stronglyAgree")
             const keys = keyPath.split('.');
             let translation = localeData;
-            try { // Add try-catch for safer nested access
-                keys.forEach(k => {
-                    translation = translation[k]; // Access nested property
-                });
-            } catch (e) {
-                translation = null; // Handle cases where intermediate keys don't exist
-            }
+            try {
+                keys.forEach(k => { translation = translation[k]; });
+            } catch (e) { translation = null; }
 
-            // Update alt text for images inside buttons, or button title if no image
             const img = el.querySelector('img');
             if (img) {
                 img.alt = translation !== undefined && translation !== null ? translation : `Missing: ${keyPath}`;
             } else {
-                // Apply to button title/tooltip if no image found
                 el.title = translation !== undefined && translation !== null ? translation : `Missing: ${keyPath}`;
             }
        });
 
-      // Update specific elements by ID if needed (e.g., results title)
-      const resultsTitleEl = document.getElementById('resultsTitle');
+       // Translate answer annotations specifically
+        answerAnnotations.forEach(span => {
+            const keyPath = span.getAttribute('data-i18n'); // Use data-i18n for annotations
+            if (!keyPath) return;
+            const keys = keyPath.split('.');
+            let translation = localeData;
+             try {
+                 keys.forEach(k => { translation = translation[k]; });
+             } catch (e) { translation = null; }
+             span.innerText = translation !== undefined && translation !== null ? translation : `Missing: ${keyPath}`;
+        });
+
+
+      // Update specific elements by ID if needed (e.g., results title H3)
       if (resultsTitleEl && localeData.resultsTitle) {
           resultsTitleEl.innerText = localeData.resultsTitle;
       }
-
-      // Translate answer button alt texts (redundant if using data-i18n-alt, but safe fallback)
-      answerButtons.forEach(button => {
-         const value = button.getAttribute('data-value');
-         const img = button.querySelector('img');
-         if (img && localeData.answerAlt) { // Check if answerAlt exists
-            let altKey;
-            if (value === '1.0') altKey = 'stronglyAgree';
-            else if (value === '0.5') altKey = 'agree';
-            else if (value === '0.0') altKey = 'neutral';
-            else if (value === '-0.5') altKey = 'disagree';
-            else if (value === '-1.0') altKey = 'stronglyDisagree';
-
-            if (altKey && localeData.answerAlt[altKey]) { // Check if specific key exists
-                img.alt = localeData.answerAlt[altKey];
-            }
-         }
-       });
 
       // Update chart labels via event (chart.js needs to listen)
       window.dispatchEvent(new CustomEvent('languageChanged', { detail: { localeData: localeData } }));
@@ -247,9 +255,8 @@
     if (!isNaN(questionNum) && questionNum > 0 && questionNum <= questions.length) {
          currentQuestionIndex = questionNum - 1;
          console.log(`Resuming quiz from question ${questionNum} based on hash.`);
-         // TODO: Need to recalculate score based on stored progress if resuming
-         // For simplicity now, hash only sets the starting visual question, score starts fresh
-         // A more robust resume would involve storing 'quizProgress' and 'userAnswers' in localStorage
+         // Simple resume: just load the question, score starts fresh
+         // TODO: Implement score recalculation based on quizProgress if full resume needed
     } else {
          currentQuestionIndex = 0; // Start from beginning
          window.location.hash = ''; // Clear invalid hash
@@ -270,7 +277,7 @@
       quizProgress = []; // Clear progress
       resultsArea.style.display = 'none'; // Hide results
       answersContainer.style.display = 'flex'; // Show answers
-      if (dot) dot.style.display = 'block'; // Ensure dot is visible initially
+      if (dot) dot.style.display = 'flex'; // Ensure dot is visible initially (use flex if that's its display type)
       window.location.hash = ''; // Clear hash
       // Reset any visual cues on answers if needed
       answerButtons.forEach(btn => btn.classList.remove('selected')); // Example visual reset
@@ -301,13 +308,19 @@
     const questionKey = `q${index}`;
 
     // Use localeData for question text and label, provide fallbacks
-    questionLabel.innerText = `${localeData.questionLabel || 'Question'} ${index + 1} / ${questions.length}`;
-    // Fallback to the question text from config if translation is missing
-    questionTitle.innerText = (localeData.questions && localeData.questions[questionKey]) ? localeData.questions[questionKey] : (question.question || "Question text missing");
+    // Ensure localeData.questions exists before accessing keys
+    const questionText = (localeData.questions && localeData.questions[questionKey])
+                         ? localeData.questions[questionKey]
+                         : (question.question || "Question text missing"); // Fallback to config text
+    const labelText = `${localeData.questionLabel || 'Question'} ${index + 1} / ${questions.length}`;
+
+    questionLabel.innerText = labelText;
+    questionTitle.innerText = questionText;
+
 
     answersContainer.style.display = 'flex';
     resultsArea.style.display = 'none';
-    if (dot) dot.style.display = 'block'; // Ensure dot is visible during quiz
+    if (dot) dot.style.display = 'flex'; // Ensure dot is visible during quiz (use flex if that's its display type)
     window.location.hash = index + 1; // Update hash for current question
 
     // Optional: Highlight previously selected answer if navigating back/forward
@@ -315,7 +328,8 @@
   }
 
   function handleAnswerClick(event) {
-    const button = event.target.closest('.answer');
+    // Use currentTarget to ensure the listener attached to the button is used
+    const button = event.currentTarget;
     if (!button) return;
 
     const valueStr = button.getAttribute('data-value');
@@ -329,7 +343,7 @@
     console.log(`Q${currentQuestionIndex + 1}: Answered with value ${answerValue}`);
 
     // Store which button was clicked (e.g., its index or value)
-    // quizProgress[currentQuestionIndex] = valueStr; // Store the value string
+    // quizProgress[currentQuestionIndex] = valueStr; // Store the value string (for potential resume)
 
     // --- Calculate score incrementally ---
     const question = questions[currentQuestionIndex];
@@ -347,19 +361,19 @@
 
     button.blur(); // Remove focus from the button
 
-    // Optional: Add visual feedback to selected button
-    answerButtons.forEach(btn => btn.classList.remove('selected'));
-    button.classList.add('selected'); // Add a 'selected' class for styling
+    // Optional: Add visual feedback to selected button (can be removed if not desired)
+    // answerButtons.forEach(btn => btn.classList.remove('selected'));
+    // button.classList.add('selected'); // Add a 'selected' class for styling
 
     updateChart(); // Update the dot position in real-time
 
     // Move to next question or show results
     currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
-      // Delay slightly before loading next question for visual feedback
+      // Delay slightly before loading next question for visual feedback (optional)
       setTimeout(() => {
           loadQuestion(currentQuestionIndex);
-          answerButtons.forEach(btn => btn.classList.remove('selected')); // Clear selection for next question
+          // answerButtons.forEach(btn => btn.classList.remove('selected')); // Clear selection for next question
       }, 150); // 150ms delay
     } else {
       // Delay slightly before showing results
@@ -370,36 +384,47 @@
   // --- Handle Browser Navigation (Basic) ---
     function handleHashChange() {
         // Avoid reacting to hash changes caused by clicking answers
+        // Check if the new hash corresponds to the *next* question index we expect after an answer
         if (window.location.hash === `#${currentQuestionIndex + 1}`) {
-            return;
+             // This likely means we just answered a question and the hash updated normally.
+             // If we are *not* expecting this hash (e.g., user manually changed it),
+             // the logic below will handle it.
+             // console.log("Hash change matches expected next question, likely from answer click.");
+             return; // Let the answer click handler manage flow
         }
+
 
         const hash = window.location.hash.slice(1);
         const targetQuestionNum = parseInt(hash, 10);
 
         console.log(`Hash changed to: #${hash}`);
 
-        // Check if navigating back/forward to a valid question number
-        if (!isNaN(targetQuestionNum) && targetQuestionNum > 0 && targetQuestionNum <= questions.length) {
+        // Check if navigating back/forward to a valid question number *different* from current
+        if (!isNaN(targetQuestionNum) && targetQuestionNum > 0 && targetQuestionNum <= questions.length && targetQuestionNum !== (currentQuestionIndex + 1)) {
             console.log(`Navigating via hash to question ${targetQuestionNum}`);
             // Simple approach: Just load the question visually.
             // Score calculation remains based on sequential progress unless resume logic is added.
             currentQuestionIndex = targetQuestionNum - 1; // Update index to match hash
             loadQuestion(currentQuestionIndex);
             // Recalculate score up to this point if needed for accurate dot position
-            recalculateScoreUpToIndex(currentQuestionIndex);
-            updateChart();
+            // recalculateScoreUpToIndex(currentQuestionIndex); // Requires quizProgress implementation
+            updateChart(); // Update dot based on potentially incomplete/reset score
         } else if (hash === '' && currentQuestionIndex > 0) {
             // Hash cleared, likely going back to the start page
             console.log("Hash cleared, resetting quiz.");
             startQuiz(); // Restart the quiz
+        } else if (hash === '' && currentQuestionIndex === 0) {
+            // Already at the start, hash cleared, do nothing.
+        } else if (targetQuestionNum === (currentQuestionIndex + 1)) {
+             // Hash changed to the current question index + 1, likely due to answering. Ignore here.
+        } else {
+            console.log("Hash change ignored or invalid:", hash);
         }
     }
 
     // Helper to recalculate score if navigating back/forward (requires quizProgress)
     function recalculateScoreUpToIndex(index) {
         // This function needs the 'quizProgress' array to be populated correctly
-        // For now, this is a placeholder as quizProgress isn't fully utilized for resume
         console.warn("Recalculate score called, but depends on unimplemented quizProgress tracking.");
         // Reset scores
         userAnswers = { econ: 0, dipl: 0, govt: 0, scty: 0 };
@@ -417,13 +442,15 @@
         //         }
         //     }
         // }
+        // After recalculating, update the chart
+        // updateChart();
     }
 
 
   // --- Chart Update (Real-time Dot Position) ---
   function updateChart() {
-     // Ensure dot element exists and maxScores are calculated
-     if (!dot || !maxScores.econ || maxScores.econ === 1) { // Check if maxScores seem valid
+     // Ensure dot element exists and maxScores are calculated and not zero
+     if (!dot || !maxScores.econ || maxScores.econ <= 1) { // Check if maxScores seem valid (not 0 or 1)
          console.warn("Dot element or maxScores not ready/valid for chart update.");
          return;
      }
@@ -484,7 +511,7 @@
     answersContainer.style.display = 'none'; // Hide answers
     if (dot) dot.style.display = 'none'; // Hide the dot on the results screen
 
-    // Use translated messages
+    // Use translated messages for completion text
     questionLabel.innerText = localeData.completeMessage || "Complete!";
     questionTitle.innerText = localeData.allAnsweredMessage || "All questions answered";
 
@@ -496,10 +523,13 @@
     const translatedIdeologyName = (localeData.ideologies && localeData.ideologies[ideologyNameKey]) ? localeData.ideologies[ideologyNameKey] : ideologyNameKey;
     ideologyResultEl.innerText = translatedIdeologyName;
 
-    // Optionally display final scores numerically
-    // Example: ideologyResultEl.innerText += ` (Econ: ${finalScores.econ.toFixed(1)}, Dipl: ${finalScores.dipl.toFixed(1)}, Govt: ${finalScores.govt.toFixed(1)}, Scty: ${finalScores.scty.toFixed(1)})`;
+    // Ensure the results title (H3) is also translated correctly
+     if (resultsTitleEl && localeData.resultsTitle) {
+         resultsTitleEl.innerText = localeData.resultsTitle;
+     }
 
     // No hash update needed here, results page doesn't correspond to a question number
+    // Optionally clear hash: window.location.hash = '';
   }
 
   // --- Find Closest Ideology ---
@@ -520,7 +550,7 @@
       }
       const ideologyScores = ideology.stats;
 
-      // Calculate Euclidean distance in 4D space
+      // Calculate Euclidean distance squared in 4D space
       // Ensure all scores are numbers before calculation
       const distSq = (
         Math.pow(Number(userScores.econ || 0) - Number(ideologyScores.econ || 0), 2) +

@@ -1,5 +1,6 @@
 {
-  "title": "Political Compass Test",
+  "title": "8values Political Compass Test - Find Your Ideology",
+  "description": "Take the 8values political test to find out where you stand. Answer questions on Economics, Diplomacy, State, and Society to see your scores and get matched with a political ideology.",
   "questionLabel": "Question",
   "completeMessage": "Complete!",
   "allAnsweredMessage": "All questions answered.",
