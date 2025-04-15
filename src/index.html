@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Political Compass</title>
+  <meta name="description" content="A political compass quiz based on 8values." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <link rel="apple-touch-icon" sizes="57x57" href="favicons/apple-icon-57x57.png" />
+  <link rel="apple-touch-icon" sizes="60x60" href="favicons/apple-icon-60x60.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="favicons/apple-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="favicons/apple-icon-76x76.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="favicons/apple-icon-114x114.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="favicons/apple-icon-120x120.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="favicons/apple-icon-144x144.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="favicons/apple-icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-icon-180x180.png" />
+  <link rel="icon" type="image/png" sizes="192x192"  href="favicons/android-icon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="favicons/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png" />
+  <link rel="manifest" href="favicons/manifest.json" />
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <meta name="msapplication-TileImage" content="favicons/ms-icon-144x144.png" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600&display=swap" rel="stylesheet" />
+  <link href="css/index.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+  <a href="https://github.com/miaohancheng/political-compass" target="_blank" class="github">
+    <img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" />
+  </a>
+
+  <header class="header">
+    <a href="#" class="logo" onclick="location.reload(); return false;"> <img src="images/political-compass-logo.svg" alt="Political Compass" />
+    </a>
+    <div class="lang-selector">
+      <button id="lang-en" class="lang-button">English</button> | <button id="lang-zh" class="lang-button">中文</button>
+    </div>
+  </header>
+
+
+  <div class="content">
+    <div class="input">
+      <div class="questions">
+        <h4 id="question-label">Question 1 / X</h4>
+        <h1 id="question-title">Loading question...</h1>
+      </div>
+      <div class="answers" id="answers">
+        <button class="answer" data-value="-1.0" data-i18n-alt="answerAlt.stronglyDisagree">
+          <img src="images/disagree-strongly.svg" alt="Strongly Disagree" />
+        </button>
+        <button class="answer" data-value="-0.5" data-i18n-alt="answerAlt.disagree">
+          <img src="images/disagree.svg" alt="Disagree" />
+        </button>
+        <button class="answer" data-value="0.0" data-i18n-alt="answerAlt.neutral">
+          <img src="images/neither.svg" alt="Neutral" />
+        </button>
+        <button class="answer" data-value="0.5" data-i18n-alt="answerAlt.agree">
+          <img src="images/agree.svg" alt="Agree" />
+        </button>
+        <button class="answer" data-value="1.0" data-i18n-alt="answerAlt.stronglyAgree">
+          <img src="images/agree-strongly.svg" alt="Strongly Agree" />
+        </button>
+      </div>
+      <div id="results-area" style="display: none;">
+        <h3 data-i18n="resultsTitle">Your closest match:</h3>
+        <h1 id="ideology-result">Calculating...</h1>
+        <button id="back-button" data-i18n="backButton">Back to Start</button>
+      </div>
+      <div id="loading-error" style="display: none; color: red; margin-top: 1rem;"></div>
+    </div>
+
+    <div class="output">
+      <div class="dot" id="dot">
+        <img src="images/target.svg" alt="Your Position" />
+      </div>
+      <canvas class="chart" id="chart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="js/chart.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

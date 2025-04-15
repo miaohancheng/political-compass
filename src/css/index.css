@@ -1,0 +1,309 @@
+/* general */
+html {
+  height: 100%;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+*, *:before, *:after {
+  box-sizing: inherit; /* Inherit box-sizing */
+}
+
+
+body {
+  min-height: 100%; /* Ensure body takes at least full viewport height */
+  background-color: #fafafa; /* Default background for mobile */
+  font-family: 'Source Sans Pro', sans-serif;
+  margin: 0;
+  display: flex; /* Use flexbox for centering container */
+  justify-content: center; /* Center container horizontally */
+  align-items: flex-start; /* Align container to top */
+  padding: 1rem; /* Add some padding around the container on small screens */
+}
+
+h1, h2, h3, h4, h5 {
+  color: #132a59;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  line-height: 1.3; /* Improve readability */
+}
+
+h1 {
+    font-size: 1.6rem; /* Adjust title size */
+}
+
+h4 {
+  color: #555; /* Slightly lighter color for question number */
+  margin: 0 0 .5rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+button {
+  background-color: #fff;
+  border: 1px solid #ddd; /* Add subtle border */
+  border-radius: .5rem;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, .08); /* Softer shadow */
+  cursor: pointer;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
+  padding: 0.8rem; /* Adjust padding */
+  transition: box-shadow .2s ease-out, transform .1s ease;
+  display: flex; /* Use flex for centering image */
+  justify-content: center;
+  align-items: center;
+}
+
+button:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, .12); /* Enhance shadow on hover */
+  border-color: #ccc;
+}
+
+button:active {
+    transform: translateY(1px); /* Slight press effect */
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, .1);
+}
+
+
+button img {
+  display: block;
+  pointer-events: none; /* Clicks should register on the button */
+  max-height: 2.5rem; /* Control image size */
+  width: auto;
+}
+
+/* container and layout */
+.container {
+  width: 100%;
+  max-width: 1100px; /* Limit max width on large screens */
+  position: relative; /* Needed for absolute positioning of github link */
+  background-color: #fafafa; /* Ensure container has background */
+  padding: 1rem; /* Padding inside container */
+  padding-top: 40px; /* <<<<< ADDED PADDING TOP to push content below potential overlap */
+  border-radius: 8px; /* Optional: rounded corners for the whole container */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Optional: subtle shadow for container */
+  margin-top: 1rem; /* Add margin to body alignment */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap; /* Allow wrapping on very small screens */
+    position: relative; /* Ensure header stays in flow */
+    z-index: 10; /* <<<<< ADDED Z-INDEX to keep header above github link */
+}
+
+.logo img {
+  height: 30px; /* Adjust logo size */
+  display: block;
+}
+
+.lang-selector {
+    margin-left: 1rem; /* Space between logo and lang selector */
+}
+
+.lang-button {
+    background: none;
+    border: none;
+    color: #132a59;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+.lang-button:hover {
+    background-color: rgba(19, 42, 89, 0.1);
+}
+
+
+.github {
+  position: absolute;
+  /* Adjust position slightly if needed, ensure it doesn't overlap header */
+  right: 5px;  /* <<<<< ADJUSTED POSITION */
+  top: 5px;    /* <<<<< ADJUSTED POSITION */
+  z-index: 5;  /* <<<<< Lower z-index than header */
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+.github:hover {
+    opacity: 1;
+}
+.github img {
+    border: 0; /* Remove border from image link */
+    /* Slightly smaller GitHub link on small screens */
+    width: 80px;
+    height: 80px;
+}
+
+
+.content {
+  display: flex;
+  flex-direction: column; /* Stack input and output vertically by default */
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 0; /* Padding top/bottom */
+}
+
+.input .questions {
+  margin-bottom: 1.5rem;
+  min-height: 5em; /* Reserve space for question text */
+}
+
+.input .answers {
+  display: flex;
+  justify-content: space-around; /* Distribute buttons evenly */
+  flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+  gap: 0.5rem; /* Space between buttons */
+}
+
+.input .answers button {
+   flex-basis: calc(20% - 0.5rem); /* Try to fit 5 buttons per row, adjust as needed */
+   max-width: 6rem; /* Limit button max width */
+   min-width: 4rem; /* Ensure buttons don't get too small */
+}
+
+/* Results Area Styling */
+#results-area {
+    text-align: center;
+    padding: 2rem 0;
+}
+#results-area h1 {
+    color: #d9534f; /* Example color for ideology */
+}
+#back-button {
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #132a59;
+    color: white;
+    font-weight: 600;
+    border: none;
+    max-width: none; /* Allow button to size naturally */
+    width: auto;
+}
+#back-button:hover {
+    background-color: #1a3a78;
+}
+
+
+.output {
+  width: 100%;
+  background-color: #fff; /* White background for chart area */
+  position: relative; /* For positioning the dot */
+  margin-top: 2rem; /* Space between input and output on mobile */
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden; /* Hide parts of dot if it goes outside */
+  padding: 1rem; /* Add padding around the canvas */
+}
+
+.output .chart {
+  display: block;
+  width: 100%; /* Make canvas fill its container */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 500px; /* Limit max size of chart */
+  margin: 0 auto; /* Center chart if max-width is reached */
+  background-color: #fff; /* Ensure canvas background */
+}
+
+.output .dot {
+  /* Positioning will be set by JS */
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left .4s ease-in-out, top .4s ease-in-out; /* Slightly faster transition */
+  z-index: 1; /* Ensure dot is above grid lines */
+  width: 2.5rem; /* Adjust dot size */
+  height: 2.5rem;
+}
+
+.output .dot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Desktop layout adjustments (768px = 48rem) */
+@media (min-width: 48rem) {
+  body {
+    /* Create the split background effect */
+    background: linear-gradient(90deg, #fafafa 50%, #fff 50%);
+    padding: 2rem; /* More padding on desktop */
+    align-items: center; /* Center container vertically on desktop */
+  }
+
+  .container {
+     padding: 2rem; /* More padding inside container on desktop */
+     padding-top: 2rem; /* Reset padding top for desktop */
+     margin-top: 0; /* Reset margin top */
+  }
+
+  .header {
+      margin-bottom: 2rem;
+  }
+
+  .logo img {
+      height: 40px; /* Larger logo */
+  }
+
+  /* Restore GitHub link size and position for desktop */
+  .github {
+      right: 0;
+      top: 0;
+  }
+  .github img {
+      width: 149px;
+      height: 149px;
+  }
+
+
+  .content {
+    flex-direction: row; /* Place input and output side-by-side */
+    align-items: stretch; /* Make input and output equal height */
+    gap: 2rem; /* Space between input and output */
+  }
+
+  .input {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertically center content within input area */
+    padding: 1rem 2rem 1rem 1rem; /* Adjust padding */
+  }
+
+  .input .answers {
+    justify-content: flex-start; /* Align buttons to the start */
+  }
+
+  .output {
+    width: 50%;
+    margin-top: 0; /* No top margin needed */
+    display: flex; /* Center canvas vertically */
+    align-items: center;
+    justify-content: center;
+    padding: 2rem; /* More padding around canvas */
+  }
+
+   .output .chart {
+       /* Canvas size is handled by its parent and JS now */
+   }
+}
+
+/* Larger Desktop Adjustments (Optional) */
+@media (min-width: 64rem) { /* 1024px */
+    h1 {
+        font-size: 1.8rem;
+    }
+    .input .answers button {
+        padding: 1rem;
+    }
+    .output .dot {
+        width: 3rem;
+        height: 3rem;
+    }
+}
