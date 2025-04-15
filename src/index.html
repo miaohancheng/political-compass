@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en"> <head>
+<html lang="en">
+<head>
   <meta charset="utf-8" />
   <title>Political Compass Test - 8values</title>
   <meta id="meta-description" name="description" content="Take the 8values political compass test to find your ideology." />
@@ -29,90 +30,92 @@
 </head>
 <body>
 <div class="container">
-  <a href="https://github.com/miaohancheng/political-compass" target="_blank" class="github">
-    <img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" />
-  </a>
-
   <header class="header">
     <a href="#" class="logo" onclick="location.reload(); return false;">
       <img src="images/political-compass-logo.svg" alt="Political Compass Logo" />
     </a>
+    <div class="language-dropdown-container">
+      <select id="language-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
   </header>
 
   <h1 id="main-title" class="main-title">Political Compass Test</h1>
 
   <div class="axis-explanations">
-    <span class="axis-label" id="tip-equality" data-i18n="labelEquality" data-tooltip="Loading tip...">Equality</span> /
-    <span class="axis-label" id="tip-market" data-i18n="labelMarket" data-tooltip="Loading tip...">Market</span> |
-    <span class="axis-label" id="tip-nation" data-i18n="labelNation" data-tooltip="Loading tip...">Nation</span> /
-    <span class="axis-label" id="tip-globe" data-i18n="labelGlobe" data-tooltip="Loading tip...">Globe</span> |
-    <span class="axis-label" id="tip-liberty" data-i18n="labelLiberty" data-tooltip="Loading tip...">Liberty</span> /
-    <span class="axis-label" id="tip-authority" data-i18n="labelAuthority" data-tooltip="Loading tip...">Authority</span> |
-    <span class="axis-label" id="tip-tradition" data-i18n="labelTradition" data-tooltip="Loading tip...">Tradition</span> /
-    <span class="axis-label" id="tip-progress" data-i18n="labelProgress" data-tooltip="Loading tip...">Progress</span>
+    <span class="axis-label" id="tip-equality" data-i18n="labelEquality" data-tooltip="Loading tip...">平等</span> /
+    <span class="axis-label" id="tip-market" data-i18n="labelMarket" data-tooltip="Loading tip...">市场</span> |
+    <span class="axis-label" id="tip-nation" data-i18n="labelNation" data-tooltip="Loading tip...">国家</span> /
+    <span class="axis-label" id="tip-globe" data-i18n="labelGlobe" data-tooltip="Loading tip...">全球</span> |
+    <span class="axis-label" id="tip-liberty" data-i18n="labelLiberty" data-tooltip="Loading tip...">自由</span> /
+    <span class="axis-label" id="tip-authority" data-i18n="labelAuthority" data-tooltip="Loading tip...">威权</span> |
+    <span class="axis-label" id="tip-tradition" data-i18n="labelTradition" data-tooltip="Loading tip...">传统</span> /
+    <span class="axis-label" id="tip-progress" data-i18n="labelProgress" data-tooltip="Loading tip...">进步</span>
   </div>
 
   <div class="content">
     <div class="input">
       <div class="questions">
-        <h4 id="question-label" data-i18n="questionLabel">Question ... / ...</h4>
-        <h1 id="question-title">Loading question...</h1>
+        <h4 id="question-label" data-i18n="questionLabel">问题 ... / ...</h4>
+        <h1 id="question-title">正在加载问题...</h1>
       </div>
 
       <div class="answers-container" id="answers-container">
         <div class="answers" id="answers">
           <button class="answer" data-value="-1.0" data-i18n-alt="answerAlt.stronglyDisagree">
-            <img src="images/disagree-strongly.svg" alt="Strongly Disagree" />
-            <span class="answer-annotation" data-i18n="answerAlt.stronglyDisagree">Strongly Disagree</span>
+            <img src="images/disagree-strongly.svg" alt="强烈反对" />
+            <span class="answer-annotation" data-i18n="answerAlt.stronglyDisagree">强烈反对</span>
           </button>
           <button class="answer" data-value="-0.5" data-i18n-alt="answerAlt.disagree">
-            <img src="images/disagree.svg" alt="Disagree" />
-            <span class="answer-annotation" data-i18n="answerAlt.disagree">Disagree</span>
+            <img src="images/disagree.svg" alt="反对" />
+            <span class="answer-annotation" data-i18n="answerAlt.disagree">反对</span>
           </button>
           <button class="answer" data-value="0.0" data-i18n-alt="answerAlt.neutral">
-            <img src="images/neither.svg" alt="Neutral" />
-            <span class="answer-annotation" data-i18n="answerAlt.neutral">Neutral</span>
+            <img src="images/neither.svg" alt="中立" />
+            <span class="answer-annotation" data-i18n="answerAlt.neutral">中立</span>
           </button>
           <button class="answer" data-value="0.5" data-i18n-alt="answerAlt.agree">
-            <img src="images/agree.svg" alt="Agree" />
-            <span class="answer-annotation" data-i18n="answerAlt.agree">Agree</span>
+            <img src="images/agree.svg" alt="同意" />
+            <span class="answer-annotation" data-i18n="answerAlt.agree">同意</span>
           </button>
           <button class="answer" data-value="1.0" data-i18n-alt="answerAlt.stronglyAgree">
-            <img src="images/agree-strongly.svg" alt="Strongly Agree" />
-            <span class="answer-annotation" data-i18n="answerAlt.stronglyAgree">Strongly Agree</span>
+            <img src="images/agree-strongly.svg" alt="强烈同意" />
+            <span class="answer-annotation" data-i18n="answerAlt.stronglyAgree">强烈同意</span>
           </button>
         </div>
-        <button id="prev-button" class="prev-button" data-i18n="prevButton" style="display: none;">Back</button>
+        <button id="prev-button" class="prev-button" data-i18n="prevButton" style="display: none;">返回</button>
       </div>
 
       <div id="results-area" style="display: none;">
-        <h3 id="resultsTitle" data-i18n="resultsTitle">Your closest match:</h3>
-        <h1 id="ideology-result" data-tooltip="Loading description...">Calculating...</h1>
+        <h3 id="resultsTitle" data-i18n="resultsTitle">你最接近的意识形态是：</h3>
+        <h1 id="ideology-result" data-tooltip="正在加载描述...">计算中...</h1>
 
         <div class="results-bars">
           <div class="axis-container">
-            <h2><span data-i18n="axisEconomic">Economic Axis</span>: <span class="weight-300" id="economic-label"></span></h2>
+            <h2><span data-i18n="axisEconomic">经济轴</span>: <span class="weight-300" id="economic-label"></span></h2>
             <div class="axis">
               <div class="bar equality" id="bar-equality"><div class="text-wrapper" id="equality-val"></div></div>
               <div class="bar market" id="bar-market"><div class="text-wrapper" id="market-val"></div></div>
             </div>
           </div>
           <div class="axis-container">
-            <h2><span data-i18n="axisDiplomatic">Diplomatic Axis</span>: <span class="weight-300" id="diplomatic-label"></span></h2>
+            <h2><span data-i18n="axisDiplomatic">外交轴</span>: <span class="weight-300" id="diplomatic-label"></span></h2>
             <div class="axis">
               <div class="bar nation" id="bar-nation"><div class="text-wrapper" id="nation-val"></div></div>
               <div class="bar globe" id="bar-globe"><div class="text-wrapper" id="globe-val"></div></div>
             </div>
           </div>
           <div class="axis-container">
-            <h2><span data-i18n="axisCivil">Civil Axis</span>: <span class="weight-300" id="civil-label"></span></h2>
+            <h2><span data-i18n="axisCivil">政治轴</span>: <span class="weight-300" id="civil-label"></span></h2>
             <div class="axis">
               <div class="bar liberty" id="bar-liberty"><div class="text-wrapper" id="liberty-val"></div></div>
               <div class="bar authority" id="bar-authority"><div class="text-wrapper" id="authority-val"></div></div>
             </div>
           </div>
           <div class="axis-container">
-            <h2><span data-i18n="axisSocietal">Societal Axis</span>: <span class="weight-300" id="societal-label"></span></h2>
+            <h2><span data-i18n="axisSocietal">社会轴</span>: <span class="weight-300" id="societal-label"></span></h2>
             <div class="axis">
               <div class="bar tradition" id="bar-tradition"><div class="text-wrapper" id="tradition-val"></div></div>
               <div class="bar progress" id="bar-progress"><div class="text-wrapper" id="progress-val"></div></div>
@@ -120,26 +123,26 @@
           </div>
         </div>
 
-        <button id="back-button" data-i18n="backButton">Back to Start</button>
+        <button id="back-button" data-i18n="backButton">返回开始</button>
       </div>
       <div id="loading-error" style="display: none; color: red; margin-top: 1rem;"></div>
     </div>
 
     <div class="output dual-chart-output">
       <div class="chart-container">
-        <h4 class="chart-title"><span data-i18n="labelEquality">Equality</span> / <span data-i18n="labelMarket">Market</span> vs <span data-i18n="labelLiberty">Liberty</span> / <span data-i18n="labelAuthority">Authority</span></h4>
+        <h4 class="chart-title"><span data-i18n="labelEquality">平等</span> / <span data-i18n="labelMarket">市场</span> vs <span data-i18n="labelLiberty">自由</span> / <span data-i18n="labelAuthority">威权</span></h4>
         <div class="chart-area">
           <div class="dot" id="dot-econ-govt">
-            <img src="images/target.svg" alt="Econ/Govt Position" />
+            <img src="images/target.svg" alt="经济/政府立场" />
           </div>
           <canvas class="chart" id="chart-econ-govt"></canvas>
         </div>
       </div>
       <div class="chart-container">
-        <h4 class="chart-title"><span data-i18n="labelNation">Nation</span> / <span data-i18n="labelGlobe">Globe</span> vs <span data-i18n="labelTradition">Tradition</span> / <span data-i18n="labelProgress">Progress</span></h4>
+        <h4 class="chart-title"><span data-i18n="labelNation">国家</span> / <span data-i18n="labelGlobe">全球</span> vs <span data-i18n="labelTradition">传统</span> / <span data-i18n="labelProgress">进步</span></h4>
         <div class="chart-area">
           <div class="dot" id="dot-dipl-scty">
-            <img src="images/target.svg" alt="Dipl/Scty Position" />
+            <img src="images/target.svg" alt="外交/社会立场" />
           </div>
           <canvas class="chart" id="chart-dipl-scty"></canvas>
         </div>
@@ -147,12 +150,13 @@
     </div>
   </div>
 
-  <div class="lang-selector">
-    <button id="lang-en" class="lang-button">English</button>
-    <button id="lang-zh" class="lang-button">中文</button>
-  </div>
-
   <iframe src="https://miaohancheng.com/donate-page/sample1/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0 none #fff; min-height:240px; width:100%; margin-top: 1.5rem;" frameborder="0" scrolling="no"> </iframe>
+
+  <a href="https://github.com/miaohancheng/political-compass" target="_blank" rel="noopener noreferrer" class="github-icon-link" title="Fork me on GitHub">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 96" width="32" height="32">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M49 0C21.86 0 0 22.344 0 49.915C0 71.114 14.016 89.18 33.457 95.434C35.914 95.886 36.938 94.33 36.938 93.011C36.938 91.836 36.895 88.33 36.873 84.337C22.168 87.386 19.408 77.796 19.408 77.796C17.188 72.084 14.107 70.03 14.107 70.03C9.66 66.955 14.47 67.004 14.47 67.004C19.497 67.338 22.48 72.38 22.48 72.38C26.903 79.91 34.68 77.46 37.017 76.448C37.47 73.31 38.84 71.114 40.39 69.84C29.39 68.685 17.73 64.33 17.73 46.157C17.73 40.63 19.69 36.19 22.82 32.73C22.26 31.24 20.75 26.725 23.33 20.204C23.33 20.204 27.53 18.78 36.78 25.158C40.78 24.05 45.09 23.496 49.37 23.48C53.65 23.496 57.96 24.05 61.96 25.158C71.21 18.78 75.41 20.204 75.41 20.204C77.99 26.725 76.48 31.24 75.92 32.73C79.05 36.19 81.01 40.63 81.01 46.157C81.01 64.38 69.33 68.685 58.31 69.84C60.16 71.44 61.8 74.87 61.8 79.945C61.8 87.05 61.74 92.63 61.74 93.01C61.74 94.338 62.75 95.895 65.25 95.434C84.72 89.17 98.7 71.106 98.7 49.915C98.7 22.344 76.84 0 49 0Z" fill="currentColor"/>
+    </svg>
+  </a>
 
 </div> <script src="js/chart.js"></script>
 <script src="js/main.js"></script>

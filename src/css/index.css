@@ -1,27 +1,27 @@
-/* general */
+/* General page setup */
 html {
   height: 100%;
   box-sizing: border-box;
 }
 
 *, *:before, *:after {
-  box-sizing: inherit;
+  box-sizing: inherit; /* Inherit box-sizing for all elements */
 }
-
 
 body {
   min-height: 100%;
-  background-color: #fafafa;
-  font-family: 'Source Sans Pro', sans-serif;
+  background-color: #fafafa; /* Light grey background */
+  font-family: 'Source Sans Pro', sans-serif; /* Set default font */
   margin: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 1rem;
+  align-items: flex-start; /* Align container to the top initially */
+  padding: 1rem; /* Padding around the container */
 }
 
+/* Heading styles */
 h1, h2, h3, h4, h5 {
-  color: #132a59;
+  color: #132a59; /* Dark blue color for headings */
   font-weight: 600;
   margin: 0 0 1rem;
   line-height: 1.3;
@@ -31,65 +31,73 @@ h1 {
     font-size: 1.6rem;
 }
 
+/* Main title specific style */
 .main-title {
     text-align: center;
     font-size: 2rem;
-    margin-top: 0;
+    margin-top: 0; /* Reset margin */
     margin-bottom: 1.5rem;
     color: #132a59;
 }
 
+/* Axis explanations text style */
 .axis-explanations {
     text-align: center;
     margin-bottom: 2rem;
     font-size: 0.9rem;
-    color: #555;
+    color: #555; /* Medium grey text */
     line-height: 1.6;
 }
+
+/* Style for individual axis labels (for tooltips) */
 .axis-label {
-    cursor: help;
-    border-bottom: 1px dashed #aaa;
+    cursor: help; /* Indicate interactivity */
+    border-bottom: 1px dashed #aaa; /* Visual cue */
     padding: 0 2px;
-    position: relative; /* Needed for tooltip */
+    position: relative; /* Needed for tooltip positioning */
 }
+
 /* --- Custom Tooltip Styles for Axis Labels --- */
+/* Tooltip arrow */
 .axis-label::before {
     content: '';
     position: absolute;
-    bottom: 100%;
+    bottom: 100%; /* Position above the label */
     left: 50%;
     transform: translateX(-50%);
     margin-bottom: 5px;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent; /* Arrow pointing down */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
     z-index: 10;
-    pointer-events: none;
+    pointer-events: none; /* Allow clicking through the arrow */
 }
+/* Tooltip text box */
 .axis-label::after {
-    content: attr(data-tooltip);
+    content: attr(data-tooltip); /* Get text from data-tooltip attribute */
     position: absolute;
-    bottom: 100%;
+    bottom: 100%; /* Position above the label */
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 10px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #fff;
+    margin-bottom: 10px; /* Space above the arrow */
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    color: #fff; /* White text */
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 0.85rem;
-    white-space: normal;
-    width: 200px;
+    white-space: normal; /* Allow text wrapping */
+    width: 200px; /* Fixed width */
     text-align: left;
-    opacity: 0;
+    opacity: 0; /* Hidden by default */
     visibility: hidden;
-    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out; /* Smooth fade */
     z-index: 10;
-    pointer-events: none;
+    pointer-events: none; /* Allow clicking through the tooltip */
 }
+/* Show tooltip on hover */
 .axis-label:hover::before,
 .axis-label:hover::after {
     opacity: 1;
@@ -97,7 +105,7 @@ h1 {
 }
 /* --- End Axis Label Tooltip Styles --- */
 
-
+/* Smaller heading style */
 h4 {
   color: #555;
   margin: 0 0 .5rem;
@@ -105,88 +113,111 @@ h4 {
   font-weight: 400;
 }
 
+/* General button styling */
 button {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: .5rem;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, .08);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, .08); /* Subtle shadow */
   cursor: pointer;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif; /* Inherit font */
   font-size: 16px;
   padding: 0.8rem;
-  transition: box-shadow .2s ease-out, transform .1s ease;
+  transition: box-shadow .2s ease-out, transform .1s ease; /* Smooth transitions */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 button:hover {
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, .12);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, .12); /* Increase shadow on hover */
   border-color: #ccc;
 }
 
 button:active {
-    transform: translateY(1px);
+    transform: translateY(1px); /* Slight press effect */
     box-shadow: 0px 1px 3px rgba(0, 0, 0, .1);
 }
 
-
+/* Styling for images inside buttons */
 button img {
   display: block;
-  pointer-events: none;
+  pointer-events: none; /* Prevent image interaction */
   max-height: 2.5rem;
   width: auto;
 }
 
-/* container and layout */
+/* Main container styling */
 .container {
   width: 100%;
-  max-width: 1100px;
-  position: relative;
+  max-width: 1100px; /* Max width for larger screens */
+  position: relative; /* Needed for absolute positioning of GitHub icon */
   background-color: #fafafa;
   padding: 1rem;
-  padding-top: 40px;
+  padding-top: 1rem; /* Adjusted top padding */
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Container shadow */
+  margin-top: 1rem; /* Space above container */
+  /* Add padding at the bottom to avoid overlap with the new GitHub icon */
+  padding-bottom: 3rem;
 }
 
+/* Header styling */
 .header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Pushes logo (left) and dropdown (right) apart */
+    align-items: center; /* Vertically aligns items in the header */
     margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
     position: relative;
     z-index: 10;
+    margin-top: 0.5rem; /* Adjusted top margin */
 }
 
+/* Language Dropdown Container - Part of Flexbox */
+.language-dropdown-container {
+    /* REMOVED: Absolute positioning properties */
+    /* REMOVED: margin-right (space-between handles spacing) */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Language Dropdown Select Element */
+#language-select {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    color: #333;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23555%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%;
+    background-size: 0.65em auto;
+    padding-right: 2em;
+}
+
+#language-select:hover {
+    border-color: #aaa;
+}
+
+#language-select:focus {
+    outline: none;
+    border-color: #132a59;
+    box-shadow: 0 0 0 2px rgba(19, 42, 89, 0.2);
+}
+
+/* Logo image style */
 .logo img {
   height: 30px;
   display: block;
 }
 
-.lang-selector {
-    margin-left: 1rem;
-    margin-top: 1.5rem;
-    text-align: center;
-}
-
-.lang-button {
-    background: none;
-    border: none;
-    color: #132a59;
-    cursor: pointer;
-    padding: 0.3rem 0.5rem;
-    font-size: 0.9rem;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-    margin: 0 0.2rem;
-}
-.lang-button:hover {
-    background-color: rgba(19, 42, 89, 0.1);
-}
-
+/* Answer button specific styles */
 .answer {
   display: flex;
   flex-direction: column;
@@ -196,109 +227,129 @@ button img {
   cursor: pointer;
 }
 
+/* Annotation text below answer buttons */
 .answer-annotation {
   font-size: 12px;
   color: #555;
   margin-top: 4px;
 }
-.github {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  z-index: 5;
-  opacity: 0.8;
-  transition: opacity 0.2s ease;
-}
-.github:hover {
-    opacity: 1;
-}
-.github img {
-    border: 0;
-    width: 80px;
-    height: 80px;
+
+/* REMOVED: Old GitHub fork ribbon styling */
+/* .github { ... } */
+/* .github img { ... } */
+
+/* START: New GitHub Icon Link Styling (Bottom Right) */
+.github-icon-link {
+    position: absolute; /* Position relative to .container */
+    bottom: 1rem;      /* Space from bottom edge */
+    right: 1rem;       /* Space from right edge */
+    z-index: 5;
+    color: #132a59;    /* Icon color */
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 }
 
+.github-icon-link:hover {
+    opacity: 1; /* Full opacity on hover */
+    color: #1a3a78; /* Slightly different color on hover */
+}
 
+.github-icon-link svg {
+    display: block; /* Prevent extra space below SVG */
+    width: 28px;    /* Icon size */
+    height: 28px;
+}
+/* END: New GitHub Icon Link Styling */
+
+
+/* Main content area layout */
 .content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Stack input and output vertically on mobile */
   width: 100%;
 }
 
+/* Input area (questions/answers) styling */
 .input {
   width: 100%;
   padding: 1rem 0;
 }
 
+/* Question text area */
 .input .questions {
   margin-bottom: 1.5rem;
-  min-height: 5em;
+  min-height: 5em; /* Ensure space for question text */
 }
 
+/* Container for answer buttons and prev button */
 .answers-container {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Center prev button below answers */
 }
 
+/* Flex container for answer buttons */
 .input .answers {
   display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  justify-content: space-around; /* Distribute buttons evenly */
+  flex-wrap: wrap; /* Allow buttons to wrap */
+  gap: 0.5rem; /* Space between buttons */
   width: 100%;
   margin-bottom: 1rem;
 }
 
+/* Individual answer button sizing */
 .input .answers button {
-   flex-basis: calc(20% - 0.5rem);
+   flex-basis: calc(20% - 0.5rem); /* Aim for 5 buttons per row, accounting for gap */
    max-width: 6rem;
-   min-width: 4rem;
+   min-width: 4rem; /* Prevent buttons from becoming too small */
 }
 
+/* Previous question button styling */
 .prev-button {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
-    background-color: #6c757d;
+    background-color: #6c757d; /* Grey background */
     color: white;
     border: none;
-    max-width: none;
+    max-width: none; /* Allow button to size naturally */
     width: auto;
-    margin-top: 1rem;
+    margin-top: 1rem; /* Space above */
 }
 .prev-button:hover {
-    background-color: #5a6268;
+    background-color: #5a6268; /* Darker grey on hover */
 }
 .prev-button:disabled {
-    background-color: #ccc;
+    background-color: #ccc; /* Lighter grey when disabled */
     cursor: not-allowed;
     opacity: 0.7;
 }
-
 
 /* --- Results Area Styling --- */
 #results-area {
     text-align: center;
     padding: 2rem 0;
 }
-#results-area h1#ideology-result { /* Ideology result H1 */
-    color: #d9534f;
+/* Ideology result H1 style */
+#results-area h1#ideology-result {
+    color: #d9534f; /* Reddish color for result */
     margin-bottom: 1.5rem;
-    display: inline-block; /* Allow relative positioning for tooltip */
+    display: inline-block; /* Needed for tooltip positioning */
     position: relative; /* Needed for tooltip positioning */
-    cursor: help; /* Indicate hover */
-    border-bottom: 2px dashed #d9534f; /* Add visual cue */
+    cursor: help; /* Indicate interactivity */
+    border-bottom: 2px dashed #d9534f; /* Dashed underline */
     padding-bottom: 0.2rem;
 }
 /* --- Tooltip for Ideology Result --- */
-#ideology-result::before { /* Tooltip arrow (pointing up) */
+/* Tooltip arrow */
+#ideology-result::before {
     content: '';
     position: absolute;
     top: 100%; /* Position below the H1 */
     left: 50%;
     transform: translateX(-50%);
-    margin-top: 5px; /* Space between H1 and tooltip */
+    margin-top: 5px;
     border-width: 6px;
     border-style: solid;
     border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent; /* Arrow pointing up */
@@ -308,18 +359,19 @@ button img {
     z-index: 10;
     pointer-events: none;
 }
-#ideology-result::after { /* Tooltip text box */
+/* Tooltip text box */
+#ideology-result::after {
     content: attr(data-tooltip);
     position: absolute;
     top: 100%; /* Position below the H1 */
     left: 50%;
     transform: translateX(-50%);
-    margin-top: 11px; /* Space including arrow */
+    margin-top: 11px; /* Space below arrow */
     background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
     padding: 10px 15px;
     border-radius: 4px;
-    font-size: 0.9rem; /* Slightly larger tooltip text */
+    font-size: 0.9rem;
     font-weight: normal; /* Normal weight for description */
     line-height: 1.4;
     white-space: normal;
@@ -332,6 +384,7 @@ button img {
     z-index: 10;
     pointer-events: none;
 }
+/* Show tooltip on hover */
 #ideology-result:hover::before,
 #ideology-result:hover::after {
     opacity: 1;
@@ -339,72 +392,72 @@ button img {
 }
 /* --- End Ideology Tooltip Styles --- */
 
-
-#results-area h2 { /* Axis titles for bars */
+/* Axis titles for results bars */
+#results-area h2 {
     font-size: 1.2rem;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
     color: #333;
     text-align: center;
 }
+/* Lighter font weight for axis labels */
 #results-area h2 .weight-300 {
     font-weight: 300;
     color: #555;
 }
 
-
-/* Numerical Score Display - REMOVED FROM HTML, so style is commented out/removed
-#results-scores { ... }
-*/
-
-/* Bar Chart Display */
+/* Container for result bars */
 .results-bars {
-    max-width: 600px;
-    margin: 2rem auto;
+    max-width: 600px; /* Limit width of bars section */
+    margin: 2rem auto; /* Center the bars section */
 }
+/* Container for a single axis bar */
 .axis-container {
     margin-bottom: 1.5rem;
 }
+/* The background track for the bar */
 .axis {
-    background-color: #eee;
-    display: flex;
+    background-color: #eee; /* Light grey track */
+    display: flex; /* Allows bars to sit side-by-side */
     height: 2.5rem;
     border-radius: 0.5rem;
-    overflow: hidden;
+    overflow: hidden; /* Clip bars within the rounded corners */
     border: 1px solid #ddd;
 }
+/* Individual colored bar segment */
 .bar {
     height: 100%;
-    transition: width 0.5s ease-in-out;
+    transition: width 0.5s ease-in-out; /* Animate width changes */
     display: flex;
     align-items: center;
-    overflow: hidden;
+    overflow: hidden; /* Hide text if bar is too small */
 }
+/* Wrapper for text inside the bar */
 .bar .text-wrapper {
     padding: 0 0.5rem;
     color: white;
     font-size: 0.9rem;
     font-weight: bold;
-    white-space: nowrap;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-    visibility: visible;
+    white-space: nowrap; /* Prevent text wrapping */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3); /* Text shadow for readability */
+    visibility: visible; /* Visible by default, JS hides if needed */
 }
 
-/* Bar Colors */
+/* Specific Bar Colors and Text Alignment */
 .bar.equality { background-color: #f44336; justify-content: flex-end; text-align: right; }
 .bar.market { background-color: #00897b; justify-content: flex-start; text-align: left; }
 .bar.nation { background-color: #ff9800; justify-content: flex-end; text-align: right; }
 .bar.globe { background-color: #03a9f4; justify-content: flex-start; text-align: left; }
-.bar.liberty { background-color: #ffeb3b; color: #333; text-shadow: none; justify-content: flex-end; text-align: right; }
+.bar.liberty { background-color: #ffeb3b; color: #333; text-shadow: none; justify-content: flex-end; text-align: right; } /* Special case for light color */
 .bar.authority { background-color: #3f51b5; justify-content: flex-start; text-align: left; }
 .bar.tradition { background-color: #8bc34a; justify-content: flex-end; text-align: right; }
 .bar.progress { background-color: #9c27b0; justify-content: flex-start; text-align: left; }
 
-
-#back-button { /* Restart button */
+/* Back to Start button styling */
+#back-button {
     margin-top: 1.5rem;
     padding: 0.8rem 1.5rem;
-    background-color: #132a59;
+    background-color: #132a59; /* Dark blue background */
     color: white;
     font-weight: 600;
     border: none;
@@ -412,32 +465,33 @@ button img {
     width: auto;
 }
 #back-button:hover {
-    background-color: #1a3a78;
+    background-color: #1a3a78; /* Slightly lighter blue on hover */
 }
 
-
-/* --- Output Area (Dual Charts) --- */
+/* --- Output Area (Dual Charts) Styling --- */
 .output.dual-chart-output {
   width: 100%;
-  background-color: #fff;
+  background-color: #fff; /* White background for chart area */
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
+  flex-wrap: wrap; /* Allow charts to wrap on small screens */
+  gap: 1rem; /* Space between charts */
+  margin-top: 2rem; /* Space above chart area */
   border: 1px solid #eee;
   border-radius: 8px;
   padding: 1rem;
-  overflow: visible;
+  overflow: visible; /* Allow tooltips/dots to potentially overflow slightly */
 }
 
+/* Container for a single chart */
 .chart-container {
-    flex: 1;
-    min-width: 250px;
+    flex: 1; /* Allow charts to grow equally */
+    min-width: 250px; /* Minimum width before wrapping */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Center chart elements */
 }
 
+/* Title above each chart */
 .chart-title {
     text-align: center;
     margin-bottom: 0.8rem;
@@ -446,39 +500,42 @@ button img {
     color: #333;
 }
 
+/* Area containing the canvas and the dot */
 .chart-area {
-    position: relative;
+    position: relative; /* For positioning the dot */
     width: 100%;
-    max-width: 300px;
-    aspect-ratio: 1 / 1;
+    max-width: 300px; /* Limit chart size on mobile */
+    aspect-ratio: 1 / 1; /* Maintain square shape */
     background-color: #fff;
-    border: 1px solid #f0f0f0;
+    border: 1px solid #f0f0f0; /* Light border */
     border-radius: 4px;
-    overflow: hidden;
+    overflow: hidden; /* Clip canvas drawing */
 }
 
+/* Canvas element itself */
 .chart-area .chart {
-  display: block;
+  display: block; /* Remove extra space below canvas */
   width: 100%;
   height: 100%;
   background-color: #fff;
 }
 
-/* Styles for the moving dots */
+/* Styles for the moving target dot */
 .chart-area .dot {
-  left: 50%;
+  left: 50%; /* Center horizontally */
   position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  transition: left .3s ease-out, top .3s ease-out;
-  z-index: 1;
-  width: 2rem;
+  top: 50%; /* Center vertically */
+  transform: translate(-50%, -50%); /* Precise centering */
+  transition: left .3s ease-out, top .3s ease-out; /* Animate movement */
+  z-index: 1; /* Ensure dot is above canvas grid */
+  width: 2rem; /* Size of the dot */
   height: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Image inside the dot */
 .chart-area .dot img {
   display: block;
   width: 100%;
@@ -486,65 +543,87 @@ button img {
   opacity: 1;
 }
 
-
-/* Desktop layout adjustments */
+/* --- Desktop Layout Adjustments (min-width: 48rem / 768px) --- */
 @media (min-width: 48rem) {
   body {
-    background: linear-gradient(90deg, #fafafa 50%, #fff 50%);
-    padding: 2rem;
-    align-items: center;
+    /* Split background for visual separation */
+    background: linear-gradient(90deg, #fdfdfd 50%, #fff 50%);
+    padding: 2rem; /* Increase padding */
+    align-items: center; /* Vertically center container */
   }
 
   .container {
-     padding: 2rem;
-     padding-top: 2rem;
-     margin-top: 0;
+     padding: 2rem; /* Increase container padding */
+     padding-top: 2rem; /* Maintain top padding */
+     margin-top: 0; /* Remove top margin */
+     padding-bottom: 4rem; /* Increase bottom padding for desktop icon */
   }
 
-  .header { margin-bottom: 2rem; }
+  .header {
+      margin-bottom: 2rem;
+      margin-top: 0; /* Reset top margin for desktop */
+  }
   .main-title { font-size: 2.5rem; margin-bottom: 2rem; }
   .logo img { height: 40px; }
-  .github { right: 0; top: 0; }
-  .github img { width: 149px; height: 149px; }
 
-  .content {
-    flex-direction: row;
-    align-items: stretch;
-    gap: 2rem;
+  /* Adjust GitHub icon position for desktop */
+  .github-icon-link {
+      bottom: 1.5rem;
+      right: 1.5rem;
+  }
+  .github-icon-link svg {
+      width: 32px;
+      height: 32px;
   }
 
+
+  /* Arrange content side-by-side */
+  .content {
+    flex-direction: row; /* Input and Output side-by-side */
+    align-items: stretch; /* Make columns equal height */
+    gap: 2rem; /* Space between columns */
+  }
+
+  /* Input column takes half the width */
   .input {
     width: 50%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: center; /* Vertically center content in input column */
     padding: 1rem 2rem 1rem 1rem;
   }
 
+  /* Align answer buttons to the start */
   .input .answers { justify-content: flex-start; margin-bottom: 1.5rem; }
+  /* Align prev button container to the start */
   .answers-container { align-items: flex-start; }
+  /* Position prev button next to answers */
   .prev-button { margin-top: 0; margin-left: 0.5rem; }
 
+  /* Output column takes half the width */
   .output.dual-chart-output {
     width: 50%;
-    margin-top: 0;
+    margin-top: 0; /* Remove top margin */
     padding: 1.5rem;
-    align-items: flex-start;
+    align-items: flex-start; /* Align chart containers to top */
     gap: 1.5rem;
   }
+  /* Allow charts to take available space */
   .chart-container {
       min-width: 0;
   }
   .chart-area {
-      max-width: none;
+      max-width: none; /* Remove max-width limit */
   }
-
 }
 
-/* Larger Desktop Adjustments */
-@media (min-width: 64rem) { /* 1024px */
+/* --- Larger Desktop Adjustments (min-width: 64rem / 1024px) --- */
+@media (min-width: 64rem) {
     h1 { font-size: 1.8rem; }
     .main-title { font-size: 2.8rem; }
-    .input .answers button { padding: 1rem; }
-    .chart-area .dot { width: 2.2rem; height: 2.2rem; }
+    .input .answers button { padding: 1rem; } /* Slightly larger answer buttons */
+    .chart-area .dot { width: 2.2rem; height: 2.2rem; } /* Slightly larger dot */
+    #language-select {
+        font-size: 1rem; /* Slightly larger dropdown font */
+    }
 }
