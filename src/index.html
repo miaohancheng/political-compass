@@ -36,9 +36,7 @@
   <header class="header">
     <a href="#" class="logo" onclick="location.reload(); return false;"> <img src="images/political-compass-logo.svg" alt="Political Compass" />
     </a>
-    <div class="lang-selector">
-      <button id="lang-en" class="lang-button">English</button> | <button id="lang-zh" class="lang-button">中文</button>
-    </div>
+
   </header>
 
 
@@ -51,18 +49,23 @@
       <div class="answers" id="answers">
         <button class="answer" data-value="-1.0" data-i18n-alt="answerAlt.stronglyDisagree">
           <img src="images/disagree-strongly.svg" alt="Strongly Disagree" />
+          <span class="answer-annotation">Strongly Disagree</span>
         </button>
         <button class="answer" data-value="-0.5" data-i18n-alt="answerAlt.disagree">
           <img src="images/disagree.svg" alt="Disagree" />
+          <span class="answer-annotation">Disagree</span>
         </button>
         <button class="answer" data-value="0.0" data-i18n-alt="answerAlt.neutral">
           <img src="images/neither.svg" alt="Neutral" />
+          <span class="answer-annotation">Neutral</span>
         </button>
         <button class="answer" data-value="0.5" data-i18n-alt="answerAlt.agree">
           <img src="images/agree.svg" alt="Agree" />
+          <span class="answer-annotation">Agree</span>
         </button>
         <button class="answer" data-value="1.0" data-i18n-alt="answerAlt.stronglyAgree">
           <img src="images/agree-strongly.svg" alt="Strongly Agree" />
+          <span class="answer-annotation">Strongly Agree</span>
         </button>
       </div>
       <div id="results-area" style="display: none;">
@@ -79,6 +82,9 @@
       </div>
       <canvas class="chart" id="chart"></canvas>
     </div>
+  </div>
+  <div class="lang-selector">
+    <button id="lang-en" class="lang-button">English</button><button id="lang-zh" class="lang-button">中文</button>
   </div>
 </div>
 
