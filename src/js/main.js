@@ -1,15 +1,13 @@
 (function() {
   // --- DOM Elements ---
-  let mainTitleEl, dotEconGovt, dotDiplScty, // Updated dots
+  let mainTitleEl, dotEconGovt, dotDiplScty,
       questionLabel, questionTitle, answersContainer, answerButtons,
       answerAnnotations, resultsArea, ideologyResultEl, resultsTitleEl, langEnButton,
       langZhButton, backButton, prevButton, loadingErrorEl, htmlEl, metaDescriptionEl,
-      // Tip elements (will be fetched in getDOMElements)
       tipEquality, tipMarket, tipNation, tipGlobe, tipLiberty, tipAuthority, tipTradition, tipProgress,
-      answersWrapperEl, // Parent div for answers + prev button
-      // Score display elements
-      scoreEqualityEl, scoreMarketEl, scoreNationEl, scoreGlobeEl,
-      scoreLibertyEl, scoreAuthorityEl, scoreTraditionEl, scoreProgressEl,
+      answersWrapperEl,
+      // Score display elements - REMOVED as they are deleted from HTML
+      // scoreEqualityEl, scoreMarketEl, ...
       // Bar elements
       barEquality, barMarket, barNation, barGlobe, barLiberty, barAuthority, barTradition, barProgress,
       // Bar value text elements
@@ -18,11 +16,11 @@
       labelEcon, labelDipl, labelGovt, labelScty;
 
 
-  // Function to get elements, called after DOM is ready or within init
+  // Function to get elements
   function getDOMElements() {
       mainTitleEl = document.getElementById('main-title');
-      dotEconGovt = document.getElementById('dot-econ-govt'); // Get first dot
-      dotDiplScty = document.getElementById('dot-dipl-scty'); // Get second dot
+      dotEconGovt = document.getElementById('dot-econ-govt');
+      dotDiplScty = document.getElementById('dot-dipl-scty');
       questionLabel = document.getElementById('question-label');
       questionTitle = document.getElementById('question-title');
       answersContainer = document.getElementById('answers');
@@ -30,7 +28,7 @@
       answerButtons = document.querySelectorAll('.answer');
       answerAnnotations = document.querySelectorAll('.answer-annotation');
       resultsArea = document.getElementById('results-area');
-      ideologyResultEl = document.getElementById('ideology-result');
+      ideologyResultEl = document.getElementById('ideology-result'); // Keep this for result and tooltip
       resultsTitleEl = document.getElementById('resultsTitle');
       langEnButton = document.getElementById('lang-en');
       langZhButton = document.getElementById('lang-zh');
@@ -39,15 +37,15 @@
       loadingErrorEl = document.getElementById('loading-error');
       htmlEl = document.documentElement;
       metaDescriptionEl = document.getElementById('meta-description');
-      // Get score elements
-      scoreEqualityEl = document.getElementById('score-equality');
-      scoreMarketEl = document.getElementById('score-market');
-      scoreNationEl = document.getElementById('score-nation');
-      scoreGlobeEl = document.getElementById('score-globe');
-      scoreLibertyEl = document.getElementById('score-liberty');
-      scoreAuthorityEl = document.getElementById('score-authority');
-      scoreTraditionEl = document.getElementById('score-tradition');
-      scoreProgressEl = document.getElementById('score-progress');
+      // Get tip elements
+      tipEquality = document.getElementById('tip-equality');
+      tipMarket = document.getElementById('tip-market');
+      tipNation = document.getElementById('tip-nation');
+      tipGlobe = document.getElementById('tip-globe');
+      tipLiberty = document.getElementById('tip-liberty');
+      tipAuthority = document.getElementById('tip-authority');
+      tipTradition = document.getElementById('tip-tradition');
+      tipProgress = document.getElementById('tip-progress');
       // Get bar elements
       barEquality = document.getElementById('bar-equality');
       barMarket = document.getElementById('bar-market');
@@ -66,20 +64,11 @@
       valAuthority = document.getElementById('authority-val');
       valTradition = document.getElementById('tradition-val');
       valProgress = document.getElementById('progress-val');
-      // Get axis label elements
+      // Get axis label elements for bars
       labelEcon = document.getElementById('economic-label');
       labelDipl = document.getElementById('diplomatic-label');
       labelGovt = document.getElementById('civil-label');
       labelScty = document.getElementById('societal-label');
-       // Get tip elements last, as they might be less critical if missing initially
-      tipEquality = document.getElementById('tip-equality');
-      tipMarket = document.getElementById('tip-market');
-      tipNation = document.getElementById('tip-nation');
-      tipGlobe = document.getElementById('tip-globe');
-      tipLiberty = document.getElementById('tip-liberty');
-      tipAuthority = document.getElementById('tip-authority');
-      tipTradition = document.getElementById('tip-tradition');
-      tipProgress = document.getElementById('tip-progress');
   }
 
 
@@ -201,14 +190,12 @@
 
           applyTranslations(); // Apply translations first
 
-          // Redraw charts with new labels
           window.dispatchEvent(new CustomEvent('languageChanged', { detail: { localeData: localeData } }));
 
-          // Update current view
           if (shuffledQuestions && currentQuestionIndex >= shuffledQuestions.length) {
-              showResults();
+              showResults(); // Re-render results page in new language
           } else if (shuffledQuestions && shuffledQuestions.length > 0) {
-              loadQuestion(currentQuestionIndex);
+              loadQuestion(currentQuestionIndex); // Reload current question text
           }
 
           console.log(`Language switched to ${lang}`);
@@ -235,13 +222,11 @@
 
       if (mainTitleEl) mainTitleEl.innerText = localeData.mainTitle || "8values Test";
 
-      // Translate elements with data-i18n (includes axis labels)
       document.querySelectorAll('[data-i18n]').forEach(el => {
           const key = el.getAttribute('data-i18n');
           el.innerText = localeData?.[key] ?? `Missing: ${key}`;
       });
 
-       // Translate alt text for answer images
        document.querySelectorAll('[data-i18n-alt]').forEach(el => {
             const keyPath = el.getAttribute('data-i18n-alt');
             const keys = keyPath.split('.');
@@ -249,10 +234,9 @@
             try { keys.forEach(k => { translation = translation[k]; }); } catch (e) { translation = null; }
             const img = el.querySelector('img');
             if (img) img.alt = translation ?? `Missing: ${keyPath}`;
-            else el.title = translation ?? `Missing: ${keyPath}`; // Keep title for images if needed
+            else el.title = translation ?? `Missing: ${keyPath}`;
        });
 
-       // Translate answer annotations
        if (answerAnnotations) {
            answerAnnotations.forEach(span => {
                const keyPath = span.getAttribute('data-i18n');
@@ -264,12 +248,11 @@
            });
        }
 
-      // Update specific button texts
       if (resultsTitleEl && localeData.resultsTitle) resultsTitleEl.innerText = localeData.resultsTitle;
       if (backButton && localeData.backButton) backButton.innerText = localeData.backButton;
       if (prevButton && localeData.prevButton) prevButton.innerText = localeData.prevButton;
 
-      // Update axis hover tips (using data-tooltip attribute)
+      // Update axis hover tips (data-tooltip attribute)
       if (localeData.axisTips) {
           const tipElements = {
               tipEquality: tipEquality, tipMarket: tipMarket, tipNation: tipNation,
@@ -280,25 +263,21 @@
               const element = tipElements[key];
               const tipText = localeData.axisTips[key];
               if (element) {
-                  element.setAttribute('data-tooltip', tipText || ''); // Set data-tooltip
-                  // element.title = ''; // Optionally clear the title attribute
-              } else {
-                  // console.warn(`Tip element for key ${key} not found.`);
+                  element.setAttribute('data-tooltip', tipText || '');
               }
           }
       } else {
           console.warn("localeData.axisTips object not found.");
       }
 
-      // Update result axis labels (numerical and bar chart titles)
-       document.querySelectorAll('[data-i18n^="resultsAxis"], [data-i18n^="axis"]').forEach(el => {
+      // Update result axis labels (bar chart titles)
+       document.querySelectorAll('[data-i18n^="axis"]').forEach(el => {
            const key = el.getAttribute('data-i18n');
            if (localeData[key]) {
                el.innerText = localeData[key];
            }
        });
 
-      // Note: Chart labels are updated via the 'languageChanged' event in chart.js
       console.log("Translations applied for language:", currentLang);
   }
 
@@ -348,7 +327,7 @@
 
     if (shuffledQuestions && shuffledQuestions.length > 0) {
         loadQuestion(currentQuestionIndex);
-        updateDots(); // Update both dots initially
+        updateDots();
     } else {
         console.error("Cannot start quiz: questions not loaded/shuffled.");
         showLoadingError("Error: Could not load questions.");
@@ -364,23 +343,17 @@
       if (resultsArea) resultsArea.style.display = 'none';
       if (answersWrapperEl) answersWrapperEl.style.display = 'flex';
       if (prevButton) prevButton.style.display = 'none';
-      // Show both dots and reset position
       if (dotEconGovt) {
           dotEconGovt.style.display = 'flex';
-          dotEconGovt.style.left = '50%';
-          dotEconGovt.style.top = '50%';
+          dotEconGovt.style.left = '50%'; dotEconGovt.style.top = '50%';
       }
       if (dotDiplScty) {
           dotDiplScty.style.display = 'flex';
-          dotDiplScty.style.left = '50%';
-          dotDiplScty.style.top = '50%';
+          dotDiplScty.style.left = '50%'; dotDiplScty.style.top = '50%';
       }
-
 
       window.location.hash = '';
-      if (answerButtons) {
-          answerButtons.forEach(btn => btn.classList.remove('selected'));
-      }
+      if (answerButtons) answerButtons.forEach(btn => btn.classList.remove('selected'));
       console.log("Quiz state reset.");
    }
 
@@ -414,7 +387,6 @@
 
     answersWrapperEl.style.display = 'flex';
     resultsArea.style.display = 'none';
-    // Ensure both dots are visible
     if (dotEconGovt) dotEconGovt.style.display = 'flex';
     if (dotDiplScty) dotDiplScty.style.display = 'flex';
   }
@@ -446,7 +418,7 @@
     userAnswers.scty += answerValue * (questionData.effect.scty || 0);
 
     button.blur();
-    updateDots(); // Update both dots
+    updateDots();
 
     currentQuestionIndex++;
     if (currentQuestionIndex < shuffledQuestions.length) {
@@ -469,14 +441,13 @@
           console.warn("Score history empty.");
       }
       loadQuestion(currentQuestionIndex);
-      updateDots(); // Update dots with restored scores
+      updateDots();
   }
 
   // --- Update Dots Position ---
   function updateDots() {
-     if (!dotEconGovt || !dotDiplScty || !maxScores.econ || maxScores.econ <= 1) {
-         return;
-     }
+     if (!dotEconGovt || !dotDiplScty || !maxScores.econ || maxScores.econ <= 1) return;
+
      const currentScores = {
          econ: 50 + 50 * (userAnswers.econ / maxScores.econ),
          dipl: 50 + 50 * (userAnswers.dipl / maxScores.dipl),
@@ -487,13 +458,11 @@
         currentScores[axis] = Math.max(0, Math.min(100, currentScores[axis]));
      }
 
-     // --- Dot 1: Econ vs Govt ---
      const positionX1 = (currentScores.econ / 50) - 1;
      const positionY1 = 1 - (currentScores.govt / 50);
      dotEconGovt.style.left = ((positionX1 + 1) / 2) * 100 + '%';
      dotEconGovt.style.top = ((1 - positionY1) / 2) * 100 + '%';
 
-     // --- Dot 2: Dipl vs Scty ---
      const positionX2 = (currentScores.dipl / 50) - 1;
      const positionY2 = 1 - (currentScores.scty / 50);
      dotDiplScty.style.left = ((positionX2 + 1) / 2) * 100 + '%';
@@ -510,6 +479,7 @@
       textElement.innerText = percentage + "%";
 
       requestAnimationFrame(() => {
+          if (!barElement || !textElement) return; // Re-check inside RAF
           if (textElement.offsetWidth + 10 > barElement.offsetWidth) {
               textElement.style.visibility = "hidden";
           } else {
@@ -558,7 +528,6 @@
      const libertyScore = finalScores.govt;
      const progressScore = finalScores.scty;
 
-
     const closestIdeology = findClosestIdeology(finalScores);
     console.log("Closest Ideology Match:", closestIdeology);
 
@@ -567,27 +536,28 @@
     if (dotEconGovt) dotEconGovt.style.display = 'none';
     if (dotDiplScty) dotDiplScty.style.display = 'none';
 
-
     if(questionLabel) questionLabel.innerText = localeData.completeMessage || "Complete!";
     if(questionTitle) questionTitle.innerText = localeData.allAnsweredMessage || "All questions answered";
 
     if(resultsArea) resultsArea.style.display = 'block';
+
+    // --- Update Ideology Result and Tooltip ---
     if(ideologyResultEl) {
         const ideologyNameKey = closestIdeology ? closestIdeology.name : "Unknown";
-        const translatedIdeologyName = (localeData.ideologies && localeData.ideologies[ideologyNameKey]) ? localeData.ideologies[ideologyNameKey] : ideologyNameKey;
+        const translatedIdeologyName = (localeData.ideologies && localeData.ideologies[ideologyNameKey])
+                                       ? localeData.ideologies[ideologyNameKey]
+                                       : ideologyNameKey;
         ideologyResultEl.innerText = translatedIdeologyName;
+
+        // Set the tooltip using the description from locale data
+        const ideologyDescription = (localeData.ideologyDescriptions && localeData.ideologyDescriptions[ideologyNameKey])
+                                    ? localeData.ideologyDescriptions[ideologyNameKey]
+                                    : (localeData.ideologyDescriptions?.Unknown || "Description not available."); // Fallback description
+        ideologyResultEl.setAttribute('data-tooltip', ideologyDescription);
     }
     if (resultsTitleEl && localeData.resultsTitle) resultsTitleEl.innerText = localeData.resultsTitle;
 
-    // --- Update Numerical Scores ---
-    if(scoreEqualityEl) scoreEqualityEl.innerText = equalityScore.toFixed(1);
-    if(scoreMarketEl) scoreMarketEl.innerText = marketScore.toFixed(1);
-    if(scoreNationEl) scoreNationEl.innerText = nationScore.toFixed(1);
-    if(scoreGlobeEl) scoreGlobeEl.innerText = globeScore.toFixed(1);
-    if(scoreLibertyEl) scoreLibertyEl.innerText = libertyScore.toFixed(1);
-    if(scoreAuthorityEl) scoreAuthorityEl.innerText = authorityScore.toFixed(1);
-    if(scoreTraditionEl) scoreTraditionEl.innerText = traditionScore.toFixed(1);
-    if(scoreProgressEl) scoreProgressEl.innerText = progressScore.toFixed(1);
+    // --- REMOVED Update Numerical Scores Section ---
 
     // --- Update Bar Chart ---
     setBarValue(barEquality, valEquality, equalityScore);

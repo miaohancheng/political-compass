@@ -50,51 +50,52 @@ h1 {
     cursor: help;
     border-bottom: 1px dashed #aaa;
     padding: 0 2px;
-    position: relative; /* Needed for absolute positioning of tooltip */
+    position: relative; /* Needed for tooltip */
 }
-/* --- Custom Tooltip Styles --- */
-.axis-label::before { /* Tooltip arrow */
+/* --- Custom Tooltip Styles for Axis Labels --- */
+.axis-label::before {
     content: '';
     position: absolute;
-    bottom: 100%; /* Position above the label */
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 5px; /* Space between label and tooltip */
+    margin-bottom: 5px;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent; /* Arrow pointing down */
+    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
     z-index: 10;
+    pointer-events: none;
 }
-.axis-label::after { /* Tooltip text box */
-    content: attr(data-tooltip); /* Get text from data-tooltip attribute */
+.axis-label::after {
+    content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%; /* Position above the label */
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 10px; /* Space including arrow */
-    background-color: rgba(0, 0, 0, 0.8); /* Dark background */
-    color: #fff; /* White text */
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 0.85rem;
-    white-space: normal; /* Allow wrapping */
-    width: 200px; /* Set a max-width */
+    white-space: normal;
+    width: 200px;
     text-align: left;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-    z-index: 10; /* Ensure tooltip is on top */
-    pointer-events: none; /* Prevent tooltip from blocking hover on label */
+    z-index: 10;
+    pointer-events: none;
 }
 .axis-label:hover::before,
 .axis-label:hover::after {
     opacity: 1;
     visibility: visible;
 }
-/* --- End Custom Tooltip Styles --- */
+/* --- End Axis Label Tooltip Styles --- */
 
 
 h4 {
@@ -281,11 +282,65 @@ button img {
     text-align: center;
     padding: 2rem 0;
 }
-#results-area h1 {
+#results-area h1#ideology-result { /* Ideology result H1 */
     color: #d9534f;
     margin-bottom: 1.5rem;
+    display: inline-block; /* Allow relative positioning for tooltip */
+    position: relative; /* Needed for tooltip positioning */
+    cursor: help; /* Indicate hover */
+    border-bottom: 2px dashed #d9534f; /* Add visual cue */
+    padding-bottom: 0.2rem;
 }
-#results-area h2 {
+/* --- Tooltip for Ideology Result --- */
+#ideology-result::before { /* Tooltip arrow (pointing up) */
+    content: '';
+    position: absolute;
+    top: 100%; /* Position below the H1 */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 5px; /* Space between H1 and tooltip */
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent; /* Arrow pointing up */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    z-index: 10;
+    pointer-events: none;
+}
+#ideology-result::after { /* Tooltip text box */
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%; /* Position below the H1 */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 11px; /* Space including arrow */
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 0.9rem; /* Slightly larger tooltip text */
+    font-weight: normal; /* Normal weight for description */
+    line-height: 1.4;
+    white-space: normal;
+    width: 280px; /* Wider tooltip */
+    max-width: 90vw; /* Prevent overflow on small screens */
+    text-align: left;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    z-index: 10;
+    pointer-events: none;
+}
+#ideology-result:hover::before,
+#ideology-result:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+/* --- End Ideology Tooltip Styles --- */
+
+
+#results-area h2 { /* Axis titles for bars */
     font-size: 1.2rem;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
@@ -297,34 +352,10 @@ button img {
     color: #555;
 }
 
-/* Numerical Score Display */
-#results-scores {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background-color: #fff;
-    display: inline-block;
-    text-align: left;
-}
-#results-scores p {
-    margin: 0.5rem 0;
-    font-size: 1rem;
-    color: #333;
-}
-#results-scores span {
-    font-weight: bold;
-    display: inline-block;
-    min-width: 40px;
-    text-align: right;
-}
-#results-scores .label {
-    font-weight: 600;
-    color: #132a59;
-    display: block;
-    margin-bottom: 0.2rem;
-}
+
+/* Numerical Score Display - REMOVED FROM HTML, so style is commented out/removed
+#results-scores { ... }
+*/
 
 /* Bar Chart Display */
 .results-bars {
