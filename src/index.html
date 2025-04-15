@@ -42,14 +42,14 @@
   <h1 id="main-title" class="main-title">Political Compass Test</h1>
 
   <div class="axis-explanations">
-    <span class="axis-label" id="tip-equality" title="Loading tip...">Equality</span> /
-    <span class="axis-label" id="tip-market" title="Loading tip...">Market</span> |
-    <span class="axis-label" id="tip-nation" title="Loading tip...">Nation</span> /
-    <span class="axis-label" id="tip-globe" title="Loading tip...">Globe</span> |
-    <span class="axis-label" id="tip-liberty" title="Loading tip...">Liberty</span> /
-    <span class="axis-label" id="tip-authority" title="Loading tip...">Authority</span> |
-    <span class="axis-label" id="tip-tradition" title="Loading tip...">Tradition</span> /
-    <span class="axis-label" id="tip-progress" title="Loading tip...">Progress</span>
+    <span class="axis-label" id="tip-equality" data-i18n="labelEquality" data-tooltip="Loading tip...">Equality</span> /
+    <span class="axis-label" id="tip-market" data-i18n="labelMarket" data-tooltip="Loading tip...">Market</span> |
+    <span class="axis-label" id="tip-nation" data-i18n="labelNation" data-tooltip="Loading tip...">Nation</span> /
+    <span class="axis-label" id="tip-globe" data-i18n="labelGlobe" data-tooltip="Loading tip...">Globe</span> |
+    <span class="axis-label" id="tip-liberty" data-i18n="labelLiberty" data-tooltip="Loading tip...">Liberty</span> /
+    <span class="axis-label" id="tip-authority" data-i18n="labelAuthority" data-tooltip="Loading tip...">Authority</span> |
+    <span class="axis-label" id="tip-tradition" data-i18n="labelTradition" data-tooltip="Loading tip...">Tradition</span> /
+    <span class="axis-label" id="tip-progress" data-i18n="labelProgress" data-tooltip="Loading tip...">Progress</span>
   </div>
 
   <div class="content">
@@ -126,16 +126,31 @@
             </div>
           </div>
         </div>
+
         <button id="back-button" data-i18n="backButton">Back to Start</button>
       </div>
       <div id="loading-error" style="display: none; color: red; margin-top: 1rem;"></div>
     </div>
 
-    <div class="output">
-      <div class="dot" id="dot">
-        <img src="images/target.svg" alt="Your Position Indicator" />
+    <div class="output dual-chart-output">
+      <div class="chart-container">
+        <h4 class="chart-title"><span data-i18n="labelEquality">Equality</span> / <span data-i18n="labelMarket">Market</span> vs <span data-i18n="labelLiberty">Liberty</span> / <span data-i18n="labelAuthority">Authority</span></h4>
+        <div class="chart-area">
+          <div class="dot" id="dot-econ-govt">
+            <img src="images/target.svg" alt="Econ/Govt Position" />
+          </div>
+          <canvas class="chart" id="chart-econ-govt"></canvas>
+        </div>
       </div>
-      <canvas class="chart" id="chart"></canvas>
+      <div class="chart-container">
+        <h4 class="chart-title"><span data-i18n="labelNation">Nation</span> / <span data-i18n="labelGlobe">Globe</span> vs <span data-i18n="labelTradition">Tradition</span> / <span data-i18n="labelProgress">Progress</span></h4>
+        <div class="chart-area">
+          <div class="dot" id="dot-dipl-scty">
+            <img src="images/target.svg" alt="Dipl/Scty Position" />
+          </div>
+          <canvas class="chart" id="chart-dipl-scty"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -143,7 +158,9 @@
     <button id="lang-en" class="lang-button">English</button>
     <button id="lang-zh" class="lang-button">中文</button>
   </div>
-  <iframe src="https://miaohancheng.com/donate-page/sample1/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;" frameborder="0" scrolling="no"> </iframe>
+
+  <iframe src="https://miaohancheng.com/donate-page/sample1/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0 none #fff; min-height:240px; width:100%; margin-top: 1.5rem;" frameborder="0" scrolling="no"> </iframe>
+
 </div> <script src="js/chart.js"></script>
 <script src="js/main.js"></script>
 </body>

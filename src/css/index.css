@@ -31,7 +31,6 @@ h1 {
     font-size: 1.6rem;
 }
 
-/* Main Title Style */
 .main-title {
     text-align: center;
     font-size: 2rem;
@@ -40,7 +39,6 @@ h1 {
     color: #132a59;
 }
 
-/* Axis Explanations Style */
 .axis-explanations {
     text-align: center;
     margin-bottom: 2rem;
@@ -52,11 +50,51 @@ h1 {
     cursor: help;
     border-bottom: 1px dashed #aaa;
     padding: 0 2px;
+    position: relative; /* Needed for absolute positioning of tooltip */
 }
-.axis-label:hover {
-    border-bottom-color: #132a59;
-    color: #132a59;
+/* --- Custom Tooltip Styles --- */
+.axis-label::before { /* Tooltip arrow */
+    content: '';
+    position: absolute;
+    bottom: 100%; /* Position above the label */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 5px; /* Space between label and tooltip */
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent; /* Arrow pointing down */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    z-index: 10;
 }
+.axis-label::after { /* Tooltip text box */
+    content: attr(data-tooltip); /* Get text from data-tooltip attribute */
+    position: absolute;
+    bottom: 100%; /* Position above the label */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px; /* Space including arrow */
+    background-color: rgba(0, 0, 0, 0.8); /* Dark background */
+    color: #fff; /* White text */
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    white-space: normal; /* Allow wrapping */
+    width: 200px; /* Set a max-width */
+    text-align: left;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    z-index: 10; /* Ensure tooltip is on top */
+    pointer-events: none; /* Prevent tooltip from blocking hover on label */
+}
+.axis-label:hover::before,
+.axis-label:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+/* --- End Custom Tooltip Styles --- */
 
 
 h4 {
@@ -243,22 +281,21 @@ button img {
     text-align: center;
     padding: 2rem 0;
 }
-#results-area h1 { /* Ideology result */
+#results-area h1 {
     color: #d9534f;
     margin-bottom: 1.5rem;
 }
-#results-area h2 { /* Axis titles in results */
+#results-area h2 {
     font-size: 1.2rem;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
     color: #333;
     text-align: center;
 }
-#results-area h2 .weight-300 { /* Axis label like "Socialist" */
-    font-weight: 300; /* Lighter weight */
+#results-area h2 .weight-300 {
+    font-weight: 300;
     color: #555;
 }
-
 
 /* Numerical Score Display */
 #results-scores {
@@ -291,45 +328,46 @@ button img {
 
 /* Bar Chart Display */
 .results-bars {
-    max-width: 600px; /* Limit width of bar area */
-    margin: 2rem auto; /* Center the bar area */
+    max-width: 600px;
+    margin: 2rem auto;
 }
 .axis-container {
     margin-bottom: 1.5rem;
 }
 .axis {
-    background-color: #eee; /* Background for the bar track */
-    display: flex; /* Place bars side-by-side */
-    height: 2.5rem; /* Height of the bars */
-    border-radius: 0.5rem; /* Rounded corners for track */
-    overflow: hidden; /* Ensure bars stay within track */
+    background-color: #eee;
+    display: flex;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
     border: 1px solid #ddd;
 }
 .bar {
     height: 100%;
-    transition: width 0.5s ease-in-out; /* Animate width change */
+    transition: width 0.5s ease-in-out;
     display: flex;
-    align-items: center; /* Vertically center text */
-    overflow: hidden; /* Hide text overflow */
+    align-items: center;
+    overflow: hidden;
 }
 .bar .text-wrapper {
     padding: 0 0.5rem;
     color: white;
     font-size: 0.9rem;
     font-weight: bold;
-    white-space: nowrap; /* Prevent text wrapping */
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3); /* Add shadow for readability */
+    white-space: nowrap;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    visibility: visible;
 }
 
-/* Bar Colors (based on 8values example) */
-.bar.equality { background-color: #f44336; justify-content: flex-end; text-align: right; } /* Red */
-.bar.market { background-color: #00897b; justify-content: flex-start; text-align: left; } /* Teal */
-.bar.nation { background-color: #ff9800; justify-content: flex-end; text-align: right; } /* Orange */
-.bar.globe { background-color: #03a9f4; justify-content: flex-start; text-align: left; } /* Light Blue */
-.bar.liberty { background-color: #ffeb3b; color: #333; text-shadow: none; justify-content: flex-end; text-align: right; } /* Yellow (darker text) */
-.bar.authority { background-color: #3f51b5; justify-content: flex-start; text-align: left; } /* Indigo */
-.bar.tradition { background-color: #8bc34a; justify-content: flex-end; text-align: right; } /* Light Green */
-.bar.progress { background-color: #9c27b0; justify-content: flex-start; text-align: left; } /* Purple */
+/* Bar Colors */
+.bar.equality { background-color: #f44336; justify-content: flex-end; text-align: right; }
+.bar.market { background-color: #00897b; justify-content: flex-start; text-align: left; }
+.bar.nation { background-color: #ff9800; justify-content: flex-end; text-align: right; }
+.bar.globe { background-color: #03a9f4; justify-content: flex-start; text-align: left; }
+.bar.liberty { background-color: #ffeb3b; color: #333; text-shadow: none; justify-content: flex-end; text-align: right; }
+.bar.authority { background-color: #3f51b5; justify-content: flex-start; text-align: left; }
+.bar.tradition { background-color: #8bc34a; justify-content: flex-end; text-align: right; }
+.bar.progress { background-color: #9c27b0; justify-content: flex-start; text-align: left; }
 
 
 #back-button { /* Restart button */
@@ -347,42 +385,70 @@ button img {
 }
 
 
-.output {
+/* --- Output Area (Dual Charts) --- */
+.output.dual-chart-output {
   width: 100%;
   background-color: #fff;
-  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-top: 2rem;
   border: 1px solid #eee;
   border-radius: 8px;
-  overflow: hidden;
   padding: 1rem;
+  overflow: visible;
 }
 
-.output .chart {
+.chart-container {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-title {
+    text-align: center;
+    margin-bottom: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.chart-area {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 1 / 1;
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.chart-area .chart {
   display: block;
   width: 100%;
-  height: auto;
-  max-width: 500px;
-  margin: 0 auto;
+  height: 100%;
   background-color: #fff;
 }
 
-/* --- Styles for the moving dot (Reverted) --- */
-.output .dot {
+/* Styles for the moving dots */
+.chart-area .dot {
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
   transition: left .3s ease-out, top .3s ease-out;
   z-index: 1;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.output .dot img {
+.chart-area .dot img {
   display: block;
   width: 100%;
   height: 100%;
@@ -390,7 +456,7 @@ button img {
 }
 
 
-/* Desktop layout adjustments (768px = 48rem) */
+/* Desktop layout adjustments */
 @media (min-width: 48rem) {
   body {
     background: linear-gradient(90deg, #fafafa 50%, #fff 50%);
@@ -404,28 +470,11 @@ button img {
      margin-top: 0;
   }
 
-  .header {
-      margin-bottom: 2rem;
-  }
-
-  .main-title {
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-  }
-
-  .logo img {
-      height: 40px;
-  }
-
-  .github {
-      right: 0;
-      top: 0;
-  }
-  .github img {
-      width: 149px;
-      height: 149px;
-  }
-
+  .header { margin-bottom: 2rem; }
+  .main-title { font-size: 2.5rem; margin-bottom: 2rem; }
+  .logo img { height: 40px; }
+  .github { right: 0; top: 0; }
+  .github img { width: 149px; height: 149px; }
 
   .content {
     flex-direction: row;
@@ -441,48 +490,30 @@ button img {
     padding: 1rem 2rem 1rem 1rem;
   }
 
-  .input .answers {
-    justify-content: flex-start;
-    margin-bottom: 1.5rem;
-  }
+  .input .answers { justify-content: flex-start; margin-bottom: 1.5rem; }
+  .answers-container { align-items: flex-start; }
+  .prev-button { margin-top: 0; margin-left: 0.5rem; }
 
-  .answers-container {
-      align-items: flex-start;
-  }
-
-  .prev-button {
-      margin-top: 0;
-      margin-left: 0.5rem;
-  }
-
-
-  .output {
+  .output.dual-chart-output {
     width: 50%;
     margin-top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    padding: 1.5rem;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .chart-container {
+      min-width: 0;
+  }
+  .chart-area {
+      max-width: none;
   }
 
-   .output .chart {
-       /* Canvas size handled by parent */
-   }
 }
 
-/* Larger Desktop Adjustments (Optional) */
+/* Larger Desktop Adjustments */
 @media (min-width: 64rem) { /* 1024px */
-    h1 {
-        font-size: 1.8rem;
-    }
-     .main-title {
-        font-size: 2.8rem;
-    }
-    .input .answers button {
-        padding: 1rem;
-    }
-    .output .dot {
-        /* width: 3.2rem; */
-        /* height: 3.2rem; */
-    }
+    h1 { font-size: 1.8rem; }
+    .main-title { font-size: 2.8rem; }
+    .input .answers button { padding: 1rem; }
+    .chart-area .dot { width: 2.2rem; height: 2.2rem; }
 }
