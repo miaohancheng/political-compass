@@ -670,8 +670,8 @@
     // --- Update UI to show results ---
     // Hide questions/answers, hide dots
     if (answersWrapperEl) answersWrapperEl.style.display = 'none';
-    if (dotEconGovt) dotEconGovt.style.display = 'none';
-    if (dotDiplScty) dotDiplScty.style.display = 'none';
+//    if (dotEconGovt) dotEconGovt.style.display = 'none';
+//    if (dotDiplScty) dotDiplScty.style.display = 'none';
 
     // Update question area to show completion message
     if(questionLabel) questionLabel.innerText = localeData.completeMessage || "Complete!";
