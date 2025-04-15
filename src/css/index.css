@@ -1,38 +1,66 @@
 /* general */
 html {
   height: 100%;
-  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  box-sizing: border-box;
 }
 
 *, *:before, *:after {
-  box-sizing: inherit; /* Inherit box-sizing */
+  box-sizing: inherit;
 }
 
 
 body {
-  min-height: 100%; /* Ensure body takes at least full viewport height */
-  background-color: #fafafa; /* Default background for mobile */
+  min-height: 100%;
+  background-color: #fafafa;
   font-family: 'Source Sans Pro', sans-serif;
   margin: 0;
-  display: flex; /* Use flexbox for centering container */
-  justify-content: center; /* Center container horizontally */
-  align-items: flex-start; /* Align container to top */
-  padding: 1rem; /* Add some padding around the container on small screens */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
 }
 
 h1, h2, h3, h4, h5 {
   color: #132a59;
   font-weight: 600;
   margin: 0 0 1rem;
-  line-height: 1.3; /* Improve readability */
+  line-height: 1.3;
 }
 
 h1 {
-    font-size: 1.6rem; /* Adjust title size */
+    font-size: 1.6rem;
 }
 
+/* Main Title Style */
+.main-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #132a59;
+}
+
+/* Axis Explanations Style */
+.axis-explanations {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+}
+.axis-label {
+    cursor: help;
+    border-bottom: 1px dashed #aaa;
+    padding: 0 2px;
+}
+.axis-label:hover {
+    border-bottom-color: #132a59;
+    color: #132a59;
+}
+
+
 h4 {
-  color: #555; /* Slightly lighter color for question number */
+  color: #555;
   margin: 0 0 .5rem;
   font-size: 0.9rem;
   font-weight: 400;
@@ -40,48 +68,48 @@ h4 {
 
 button {
   background-color: #fff;
-  border: 1px solid #ddd; /* Add subtle border */
+  border: 1px solid #ddd;
   border-radius: .5rem;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, .08); /* Softer shadow */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, .08);
   cursor: pointer;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 16px;
-  padding: 0.8rem; /* Adjust padding */
+  padding: 0.8rem;
   transition: box-shadow .2s ease-out, transform .1s ease;
-  display: flex; /* Use flex for centering image */
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 
 button:hover {
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, .12); /* Enhance shadow on hover */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, .12);
   border-color: #ccc;
 }
 
 button:active {
-    transform: translateY(1px); /* Slight press effect */
+    transform: translateY(1px);
     box-shadow: 0px 1px 3px rgba(0, 0, 0, .1);
 }
 
 
 button img {
   display: block;
-  pointer-events: none; /* Clicks should register on the button */
-  max-height: 2.5rem; /* Control image size */
+  pointer-events: none;
+  max-height: 2.5rem;
   width: auto;
 }
 
 /* container and layout */
 .container {
   width: 100%;
-  max-width: 1100px; /* Limit max width on large screens */
-  position: relative; /* Needed for absolute positioning of github link */
-  background-color: #fafafa; /* Ensure container has background */
-  padding: 1rem; /* Padding inside container */
-  padding-top: 40px; /* <<<<< ADDED PADDING TOP to push content below potential overlap */
-  border-radius: 8px; /* Optional: rounded corners for the whole container */
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Optional: subtle shadow for container */
-  margin-top: 1rem; /* Add margin to body alignment */
+  max-width: 1100px;
+  position: relative;
+  background-color: #fafafa;
+  padding: 1rem;
+  padding-top: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-top: 1rem;
 }
 
 .header {
@@ -89,18 +117,20 @@ button img {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    flex-wrap: wrap; /* Allow wrapping on very small screens */
-    position: relative; /* Ensure header stays in flow */
-    z-index: 10; /* <<<<< ADDED Z-INDEX to keep header above github link */
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
 }
 
 .logo img {
-  height: 30px; /* Adjust logo size */
+  height: 30px;
   display: block;
 }
 
 .lang-selector {
-    margin-left: 1rem; /* Space between logo and lang selector */
+    margin-left: 1rem;
+    margin-top: 1.5rem;
+    text-align: center;
 }
 
 .lang-button {
@@ -112,6 +142,7 @@ button img {
     font-size: 0.9rem;
     border-radius: 4px;
     transition: background-color 0.2s ease;
+    margin: 0 0.2rem;
 }
 .lang-button:hover {
     background-color: rgba(19, 42, 89, 0.1);
@@ -121,22 +152,21 @@ button img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: none; /* 根据需要添加边框或背景 */
+  border: none;
   background: none;
   cursor: pointer;
 }
 
 .answer-annotation {
-  font-size: 12px;      /* 调整为较小的字号 */
-  color: #555;          /* 设置为深灰色 */
-  margin-top: 4px;      /* 与图片之间适当的间距 */
+  font-size: 12px;
+  color: #555;
+  margin-top: 4px;
 }
 .github {
   position: absolute;
-  /* Adjust position slightly if needed, ensure it doesn't overlap header */
-  right: 5px;  /* <<<<< ADJUSTED POSITION */
-  top: 5px;    /* <<<<< ADJUSTED POSITION */
-  z-index: 5;  /* <<<<< Lower z-index than header */
+  right: 5px;
+  top: 5px;
+  z-index: 5;
   opacity: 0.8;
   transition: opacity 0.2s ease;
 }
@@ -144,8 +174,7 @@ button img {
     opacity: 1;
 }
 .github img {
-    border: 0; /* Remove border from image link */
-    /* Slightly smaller GitHub link on small screens */
+    border: 0;
     width: 80px;
     height: 80px;
 }
@@ -153,49 +182,164 @@ button img {
 
 .content {
   display: flex;
-  flex-direction: column; /* Stack input and output vertically by default */
+  flex-direction: column;
   width: 100%;
 }
 
 .input {
   width: 100%;
-  padding: 1rem 0; /* Padding top/bottom */
+  padding: 1rem 0;
 }
 
 .input .questions {
   margin-bottom: 1.5rem;
-  min-height: 5em; /* Reserve space for question text */
+  min-height: 5em;
+}
+
+.answers-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .input .answers {
   display: flex;
-  justify-content: space-around; /* Distribute buttons evenly */
-  flex-wrap: wrap; /* Allow buttons to wrap on small screens */
-  gap: 0.5rem; /* Space between buttons */
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 .input .answers button {
-   flex-basis: calc(20% - 0.5rem); /* Try to fit 5 buttons per row, adjust as needed */
-   max-width: 6rem; /* Limit button max width */
-   min-width: 4rem; /* Ensure buttons don't get too small */
+   flex-basis: calc(20% - 0.5rem);
+   max-width: 6rem;
+   min-width: 4rem;
 }
 
-/* Results Area Styling */
+.prev-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    max-width: none;
+    width: auto;
+    margin-top: 1rem;
+}
+.prev-button:hover {
+    background-color: #5a6268;
+}
+.prev-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+/* --- Results Area Styling --- */
 #results-area {
     text-align: center;
     padding: 2rem 0;
 }
-#results-area h1 {
-    color: #d9534f; /* Example color for ideology */
+#results-area h1 { /* Ideology result */
+    color: #d9534f;
+    margin-bottom: 1.5rem;
 }
-#back-button {
+#results-area h2 { /* Axis titles in results */
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+    text-align: center;
+}
+#results-area h2 .weight-300 { /* Axis label like "Socialist" */
+    font-weight: 300; /* Lighter weight */
+    color: #555;
+}
+
+
+/* Numerical Score Display */
+#results-scores {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fff;
+    display: inline-block;
+    text-align: left;
+}
+#results-scores p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #333;
+}
+#results-scores span {
+    font-weight: bold;
+    display: inline-block;
+    min-width: 40px;
+    text-align: right;
+}
+#results-scores .label {
+    font-weight: 600;
+    color: #132a59;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+/* Bar Chart Display */
+.results-bars {
+    max-width: 600px; /* Limit width of bar area */
+    margin: 2rem auto; /* Center the bar area */
+}
+.axis-container {
+    margin-bottom: 1.5rem;
+}
+.axis {
+    background-color: #eee; /* Background for the bar track */
+    display: flex; /* Place bars side-by-side */
+    height: 2.5rem; /* Height of the bars */
+    border-radius: 0.5rem; /* Rounded corners for track */
+    overflow: hidden; /* Ensure bars stay within track */
+    border: 1px solid #ddd;
+}
+.bar {
+    height: 100%;
+    transition: width 0.5s ease-in-out; /* Animate width change */
+    display: flex;
+    align-items: center; /* Vertically center text */
+    overflow: hidden; /* Hide text overflow */
+}
+.bar .text-wrapper {
+    padding: 0 0.5rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    white-space: nowrap; /* Prevent text wrapping */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3); /* Add shadow for readability */
+}
+
+/* Bar Colors (based on 8values example) */
+.bar.equality { background-color: #f44336; justify-content: flex-end; text-align: right; } /* Red */
+.bar.market { background-color: #00897b; justify-content: flex-start; text-align: left; } /* Teal */
+.bar.nation { background-color: #ff9800; justify-content: flex-end; text-align: right; } /* Orange */
+.bar.globe { background-color: #03a9f4; justify-content: flex-start; text-align: left; } /* Light Blue */
+.bar.liberty { background-color: #ffeb3b; color: #333; text-shadow: none; justify-content: flex-end; text-align: right; } /* Yellow (darker text) */
+.bar.authority { background-color: #3f51b5; justify-content: flex-start; text-align: left; } /* Indigo */
+.bar.tradition { background-color: #8bc34a; justify-content: flex-end; text-align: right; } /* Light Green */
+.bar.progress { background-color: #9c27b0; justify-content: flex-start; text-align: left; } /* Purple */
+
+
+#back-button { /* Restart button */
     margin-top: 1.5rem;
     padding: 0.8rem 1.5rem;
     background-color: #132a59;
     color: white;
     font-weight: 600;
     border: none;
-    max-width: none; /* Allow button to size naturally */
+    max-width: none;
     width: auto;
 }
 #back-button:hover {
@@ -205,66 +349,74 @@ button img {
 
 .output {
   width: 100%;
-  background-color: #fff; /* White background for chart area */
-  position: relative; /* For positioning the dot */
-  margin-top: 2rem; /* Space between input and output on mobile */
+  background-color: #fff;
+  position: relative;
+  margin-top: 2rem;
   border: 1px solid #eee;
   border-radius: 8px;
-  overflow: hidden; /* Hide parts of dot if it goes outside */
-  padding: 1rem; /* Add padding around the canvas */
+  overflow: hidden;
+  padding: 1rem;
 }
 
 .output .chart {
   display: block;
-  width: 100%; /* Make canvas fill its container */
-  height: auto; /* Maintain aspect ratio */
-  max-width: 500px; /* Limit max size of chart */
-  margin: 0 auto; /* Center chart if max-width is reached */
-  background-color: #fff; /* Ensure canvas background */
+  width: 100%;
+  height: auto;
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #fff;
 }
 
+/* --- Styles for the moving dot (Reverted) --- */
 .output .dot {
-  /* Positioning will be set by JS */
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  transition: left .4s ease-in-out, top .4s ease-in-out; /* Slightly faster transition */
-  z-index: 1; /* Ensure dot is above grid lines */
-  width: 2.5rem; /* Adjust dot size */
+  transition: left .3s ease-out, top .3s ease-out;
+  z-index: 1;
+  width: 2.5rem;
   height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .output .dot img {
   display: block;
   width: 100%;
   height: 100%;
+  opacity: 1;
 }
+
 
 /* Desktop layout adjustments (768px = 48rem) */
 @media (min-width: 48rem) {
   body {
-    /* Create the split background effect */
     background: linear-gradient(90deg, #fafafa 50%, #fff 50%);
-    padding: 2rem; /* More padding on desktop */
-    align-items: center; /* Center container vertically on desktop */
+    padding: 2rem;
+    align-items: center;
   }
 
   .container {
-     padding: 2rem; /* More padding inside container on desktop */
-     padding-top: 2rem; /* Reset padding top for desktop */
-     margin-top: 0; /* Reset margin top */
+     padding: 2rem;
+     padding-top: 2rem;
+     margin-top: 0;
   }
 
   .header {
       margin-bottom: 2rem;
   }
 
-  .logo img {
-      height: 40px; /* Larger logo */
+  .main-title {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
   }
 
-  /* Restore GitHub link size and position for desktop */
+  .logo img {
+      height: 40px;
+  }
+
   .github {
       right: 0;
       top: 0;
@@ -276,34 +428,45 @@ button img {
 
 
   .content {
-    flex-direction: row; /* Place input and output side-by-side */
-    align-items: stretch; /* Make input and output equal height */
-    gap: 2rem; /* Space between input and output */
+    flex-direction: row;
+    align-items: stretch;
+    gap: 2rem;
   }
 
   .input {
     width: 50%;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Vertically center content within input area */
-    padding: 1rem 2rem 1rem 1rem; /* Adjust padding */
+    justify-content: center;
+    padding: 1rem 2rem 1rem 1rem;
   }
 
   .input .answers {
-    justify-content: flex-start; /* Align buttons to the start */
+    justify-content: flex-start;
+    margin-bottom: 1.5rem;
   }
+
+  .answers-container {
+      align-items: flex-start;
+  }
+
+  .prev-button {
+      margin-top: 0;
+      margin-left: 0.5rem;
+  }
+
 
   .output {
     width: 50%;
-    margin-top: 0; /* No top margin needed */
-    display: flex; /* Center canvas vertically */
+    margin-top: 0;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem; /* More padding around canvas */
+    padding: 2rem;
   }
 
    .output .chart {
-       /* Canvas size is handled by its parent and JS now */
+       /* Canvas size handled by parent */
    }
 }
 
@@ -312,11 +475,14 @@ button img {
     h1 {
         font-size: 1.8rem;
     }
+     .main-title {
+        font-size: 2.8rem;
+    }
     .input .answers button {
         padding: 1rem;
     }
     .output .dot {
-        width: 3rem;
-        height: 3rem;
+        /* width: 3.2rem; */
+        /* height: 3.2rem; */
     }
 }

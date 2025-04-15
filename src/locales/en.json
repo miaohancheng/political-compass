@@ -1,11 +1,21 @@
 {
   "title": "8values Political Compass Test - Find Your Ideology",
   "description": "Take the 8values political test to find out where you stand. Answer questions on Economics, Diplomacy, State, and Society to see your scores and get matched with a political ideology.",
+  "mainTitle": "8values Political Test",
   "questionLabel": "Question",
   "completeMessage": "Complete!",
   "allAnsweredMessage": "All questions answered.",
   "resultsTitle": "Your closest match:",
+  "resultsAxisEconomic": "Economic Axis (Equality/Market):",
+  "resultsAxisDiplomatic": "Diplomatic Axis (Nation/Globe):",
+  "resultsAxisCivil": "Civil Axis (Liberty/Authority):",
+  "resultsAxisSocietal": "Societal Axis (Tradition/Progress):",
+  "axisEconomic": "Economic Axis",
+  "axisDiplomatic": "Diplomatic Axis",
+  "axisCivil": "Civil Axis",
+  "axisSocietal": "Societal Axis",
   "backButton": "Back to Start",
+  "prevButton": "Back",
   "answerAlt": {
     "stronglyDisagree": "Strongly Disagree",
     "disagree": "Disagree",
@@ -18,6 +28,22 @@
     "axisEconomicRight": "Market",
     "axisCivilTop": "Authority",
     "axisCivilBottom": "Liberty"
+  },
+  "axisTips": {
+    "tipEquality": "Those with higher Equality scores believe the economy should distribute value evenly among the populace. They tend to support progressive tax codes, social programs, and at high values, socialism.",
+    "tipMarket": "Those with higher Market scores believe the economy should be focused on rapid growth. They tend to support lower taxes, privatization, deregulation, and at high values, laissez-faire capitalism.",
+    "tipNation": "Those with higher Nation scores are patriotic and nationalist. They often believe in an aggressive foreign policy, valuing the military, strength, sovereignty, and at high values, territorial expansion.",
+    "tipGlobe": "Those with higher Globe scores are cosmopolitan and globalist. They often believe in a peaceful foreign policy, emphasizing diplomacy, cooperation, integration, and at high values, a world government.",
+    "tipLiberty": "Those with higher Liberty scores believe in strong civil liberties. They tend to support democracy and oppose state intervention in personal lives. Note that this refers to civil liberties, not economic liberties.",
+    "tipAuthority": "Those with higher Authority scores believe in strong state power. They tend to support state intervention in personal lives, government surveillance, and at high values, censorship or autocracy.",
+    "tipTradition": "Those with higher Tradition scores believe in traditional values and strict adherence to a moral code. Though not always, they are usually religious, and support the status quo or the status quo ante.",
+    "tipProgress": "Those with higher Progress scores believe in social change and rationality. Though not always, they are usually secular or atheist, and support environmental action and scientific or technological research."
+  },
+  "axisLabels": {
+    "econ": ["Communist", "Socialist", "Social", "Centrist", "Market", "Capitalist", "Laissez-Faire"],
+    "dipl": ["Cosmopolitan", "Internationalist", "Peaceful", "Balanced", "Patriotic", "Nationalist", "Chauvinist"],
+    "govt": ["Anarchist", "Libertarian", "Liberal", "Moderate", "Statist", "Authoritarian", "Totalitarian"],
+    "scty": ["Revolutionary", "Very Progressive", "Progressive", "Neutral", "Traditional", "Very Traditional", "Reactionary"]
   },
   "questions": {
     "q0": "Oppression by corporations is more of a concern than oppression by governments.",

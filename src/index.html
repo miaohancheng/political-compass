@@ -35,33 +35,97 @@
 
   <header class="header">
     <a href="#" class="logo" onclick="location.reload(); return false;">
-      <img src="images/political-compass-logo.svg" alt="Political Compass Logo" /> </a>
+      <img src="images/political-compass-logo.svg" alt="Political Compass Logo" />
+    </a>
   </header>
+
+  <h1 id="main-title" class="main-title">Political Compass Test</h1>
+
+  <div class="axis-explanations">
+    <span class="axis-label" id="tip-equality" title="Loading tip...">Equality</span> /
+    <span class="axis-label" id="tip-market" title="Loading tip...">Market</span> |
+    <span class="axis-label" id="tip-nation" title="Loading tip...">Nation</span> /
+    <span class="axis-label" id="tip-globe" title="Loading tip...">Globe</span> |
+    <span class="axis-label" id="tip-liberty" title="Loading tip...">Liberty</span> /
+    <span class="axis-label" id="tip-authority" title="Loading tip...">Authority</span> |
+    <span class="axis-label" id="tip-tradition" title="Loading tip...">Tradition</span> /
+    <span class="axis-label" id="tip-progress" title="Loading tip...">Progress</span>
+  </div>
 
   <div class="content">
     <div class="input">
       <div class="questions">
-        <h4 id="question-label" data-i18n="questionLabel">Question ... / ...</h4> <h1 id="question-title">Loading question...</h1>
+        <h4 id="question-label" data-i18n="questionLabel">Question ... / ...</h4>
+        <h1 id="question-title">Loading question...</h1>
       </div>
-      <div class="answers" id="answers">
-        <button class="answer" data-value="-1.0" data-i18n-alt="answerAlt.stronglyDisagree">
-          <img src="images/disagree-strongly.svg" alt="Strongly Disagree" />
-          <span class="answer-annotation" data-i18n="answerAlt.stronglyDisagree">Strongly Disagree</span> </button>
-        <button class="answer" data-value="-0.5" data-i18n-alt="answerAlt.disagree">
-          <img src="images/disagree.svg" alt="Disagree" />
-          <span class="answer-annotation" data-i18n="answerAlt.disagree">Disagree</span> </button>
-        <button class="answer" data-value="0.0" data-i18n-alt="answerAlt.neutral">
-          <img src="images/neither.svg" alt="Neutral" />
-          <span class="answer-annotation" data-i18n="answerAlt.neutral">Neutral</span> </button>
-        <button class="answer" data-value="0.5" data-i18n-alt="answerAlt.agree">
-          <img src="images/agree.svg" alt="Agree" />
-          <span class="answer-annotation" data-i18n="answerAlt.agree">Agree</span> </button>
-        <button class="answer" data-value="1.0" data-i18n-alt="answerAlt.stronglyAgree">
-          <img src="images/agree-strongly.svg" alt="Strongly Agree" />
-          <span class="answer-annotation" data-i18n="answerAlt.stronglyAgree">Strongly Agree</span> </button>
+
+      <div class="answers-container" id="answers-container">
+        <div class="answers" id="answers">
+          <button class="answer" data-value="-1.0" data-i18n-alt="answerAlt.stronglyDisagree">
+            <img src="images/disagree-strongly.svg" alt="Strongly Disagree" />
+            <span class="answer-annotation" data-i18n="answerAlt.stronglyDisagree">Strongly Disagree</span>
+          </button>
+          <button class="answer" data-value="-0.5" data-i18n-alt="answerAlt.disagree">
+            <img src="images/disagree.svg" alt="Disagree" />
+            <span class="answer-annotation" data-i18n="answerAlt.disagree">Disagree</span>
+          </button>
+          <button class="answer" data-value="0.0" data-i18n-alt="answerAlt.neutral">
+            <img src="images/neither.svg" alt="Neutral" />
+            <span class="answer-annotation" data-i18n="answerAlt.neutral">Neutral</span>
+          </button>
+          <button class="answer" data-value="0.5" data-i18n-alt="answerAlt.agree">
+            <img src="images/agree.svg" alt="Agree" />
+            <span class="answer-annotation" data-i18n="answerAlt.agree">Agree</span>
+          </button>
+          <button class="answer" data-value="1.0" data-i18n-alt="answerAlt.stronglyAgree">
+            <img src="images/agree-strongly.svg" alt="Strongly Agree" />
+            <span class="answer-annotation" data-i18n="answerAlt.stronglyAgree">Strongly Agree</span>
+          </button>
+        </div>
+        <button id="prev-button" class="prev-button" data-i18n="prevButton" style="display: none;">Back</button>
       </div>
+
       <div id="results-area" style="display: none;">
-        <h3 id="resultsTitle" data-i18n="resultsTitle">Your closest match:</h3> <h1 id="ideology-result">Calculating...</h1>
+        <h3 id="resultsTitle" data-i18n="resultsTitle">Your closest match:</h3>
+        <h1 id="ideology-result">Calculating...</h1>
+
+        <div id="results-scores">
+          <p><span class="label" data-i18n="resultsAxisEconomic">Economic Axis (Equality/Market):</span> <span id="score-equality">--</span>% / <span id="score-market">--</span>%</p>
+          <p><span class="label" data-i18n="resultsAxisDiplomatic">Diplomatic Axis (Nation/Globe):</span> <span id="score-nation">--</span>% / <span id="score-globe">--</span>%</p>
+          <p><span class="label" data-i18n="resultsAxisCivil">Civil Axis (Liberty/Authority):</span> <span id="score-liberty">--</span>% / <span id="score-authority">--</span>%</p>
+          <p><span class="label" data-i18n="resultsAxisSocietal">Societal Axis (Tradition/Progress):</span> <span id="score-tradition">--</span>% / <span id="score-progress">--</span>%</p>
+        </div>
+
+        <div class="results-bars">
+          <div class="axis-container">
+            <h2><span data-i18n="axisEconomic">Economic Axis</span>: <span class="weight-300" id="economic-label"></span></h2>
+            <div class="axis">
+              <div class="bar equality" id="bar-equality"><div class="text-wrapper" id="equality-val"></div></div>
+              <div class="bar market" id="bar-market"><div class="text-wrapper" id="market-val"></div></div>
+            </div>
+          </div>
+          <div class="axis-container">
+            <h2><span data-i18n="axisDiplomatic">Diplomatic Axis</span>: <span class="weight-300" id="diplomatic-label"></span></h2>
+            <div class="axis">
+              <div class="bar nation" id="bar-nation"><div class="text-wrapper" id="nation-val"></div></div>
+              <div class="bar globe" id="bar-globe"><div class="text-wrapper" id="globe-val"></div></div>
+            </div>
+          </div>
+          <div class="axis-container">
+            <h2><span data-i18n="axisCivil">Civil Axis</span>: <span class="weight-300" id="civil-label"></span></h2>
+            <div class="axis">
+              <div class="bar liberty" id="bar-liberty"><div class="text-wrapper" id="liberty-val"></div></div>
+              <div class="bar authority" id="bar-authority"><div class="text-wrapper" id="authority-val"></div></div>
+            </div>
+          </div>
+          <div class="axis-container">
+            <h2><span data-i18n="axisSocietal">Societal Axis</span>: <span class="weight-300" id="societal-label"></span></h2>
+            <div class="axis">
+              <div class="bar tradition" id="bar-tradition"><div class="text-wrapper" id="tradition-val"></div></div>
+              <div class="bar progress" id="bar-progress"><div class="text-wrapper" id="progress-val"></div></div>
+            </div>
+          </div>
+        </div>
         <button id="back-button" data-i18n="backButton">Back to Start</button>
       </div>
       <div id="loading-error" style="display: none; color: red; margin-top: 1rem;"></div>
@@ -69,7 +133,8 @@
 
     <div class="output">
       <div class="dot" id="dot">
-        <img src="images/target.svg" alt="Your Position Indicator" /> </div>
+        <img src="images/target.svg" alt="Your Position Indicator" />
+      </div>
       <canvas class="chart" id="chart"></canvas>
     </div>
   </div>
