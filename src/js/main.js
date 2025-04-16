@@ -4,7 +4,7 @@
   let mainTitleEl, dotEconGovt, dotDiplScty,
       questionLabel, questionTitle, answersContainer, answerButtons,
       answerAnnotations, resultsArea, ideologyResultEl, resultsTitleEl,
-      languageSelectEl, // ADDED: Variable for the language dropdown
+      languageSelectEl, // Variable for the language dropdown
       backButton, prevButton, loadingErrorEl, htmlEl, metaDescriptionEl,
       tipEquality, tipMarket, tipNation, tipGlobe, tipLiberty, tipAuthority, tipTradition, tipProgress,
       answersWrapperEl,
@@ -30,7 +30,7 @@
       resultsArea = document.getElementById('results-area'); // The whole results section
       ideologyResultEl = document.getElementById('ideology-result'); // H1 showing the matched ideology
       resultsTitleEl = document.getElementById('resultsTitle'); // "Your closest match:" text
-      languageSelectEl = document.getElementById('language-select'); // ADDED: Get the language dropdown
+      languageSelectEl = document.getElementById('language-select'); // Get the language dropdown
       backButton = document.getElementById('back-button'); // "Back to Start" button
       prevButton = document.getElementById('prev-button'); // "Back" (previous question) button
       loadingErrorEl = document.getElementById('loading-error'); // Element to display errors
@@ -76,8 +76,8 @@
   let questions = []; // Stores all questions from config/questions.json
   let shuffledQuestions = []; // Stores questions in a random order for the quiz
   let ideologies = []; // Stores all ideologies from config/ideologies.json
-  let currentLang = 'en'; // Tracks the currently selected language ('en' or 'zh')
-  let localeData = {}; // Stores the loaded language strings (from locales/en.json or locales/zh.json)
+  let currentLang = 'en'; // Tracks the currently selected language ('en', 'zh', 'es', 'pt')
+  let localeData = {}; // Stores the loaded language strings
   let userAnswers = {}; // Stores the user's cumulative scores for each axis
   let scoreHistory = []; // Stores previous score states to allow going back
   const maxScores = { econ: 0, dipl: 0, govt: 0, scty: 0 }; // Stores the maximum possible absolute score for each axis
@@ -104,10 +104,22 @@
     }
     showLoadingError(null); // Hide any previous error messages
 
-    // Determine initial language: check localStorage, then browser language, default to 'en'
-    currentLang = localStorage.getItem('preferredLang') || (navigator.language.startsWith('zh') ? 'zh' : 'en');
+    // --- Determine initial language ---
+    // 1. Check localStorage
+    let preferredLang = localStorage.getItem('preferredLang');
+    // 2. Check browser language (navigator.language or navigator.languages)
+    if (!preferredLang && navigator.language) {
+        const browserLang = navigator.language.toLowerCase().split('-')[0]; // Get primary language code (e.g., 'en', 'zh', 'es', 'pt')
+        if (['en', 'zh', 'es', 'pt'].includes(browserLang)) { // Check if it's one of the supported languages
+            preferredLang = browserLang;
+        }
+    }
+    // 3. Default to 'en'
+    currentLang = preferredLang || 'en';
+    // --- End of Language Determination ---
 
-    // ADDED: Set the initial selected option in the dropdown
+
+    // Set the initial selected option in the dropdown
     if (languageSelectEl) {
         languageSelectEl.value = currentLang;
     }
@@ -149,13 +161,13 @@
       const [questionsRes, ideologiesRes, localeRes] = await Promise.all([
         fetch('config/questions.json'),
         fetch('config/ideologies.json'),
-        fetch(`locales/${lang}.json`)
+        fetch(`locales/${lang}.json`) // Fetch the specific language file
       ]);
 
       // Check if fetches were successful
       if (!questionsRes.ok) throw new Error(`Questions fetch failed: ${questionsRes.status}`);
       if (!ideologiesRes.ok) throw new Error(`Ideologies fetch failed: ${ideologiesRes.status}`);
-      if (!localeRes.ok) throw new Error(`Locale fetch failed: ${localeRes.status}`);
+      if (!localeRes.ok) throw new Error(`Locale fetch failed for ${lang}: ${localeRes.status}`); // Improved error message
 
       // Parse JSON data
       questions = await questionsRes.json();
@@ -167,7 +179,7 @@
       localStorage.setItem('preferredLang', lang);
       if (htmlEl) htmlEl.lang = lang; // Set lang attribute on <html> tag
 
-       // ADDED: Ensure dropdown reflects the newly loaded language
+       // Ensure dropdown reflects the newly loaded language
        if (languageSelectEl && languageSelectEl.value !== currentLang) {
            languageSelectEl.value = currentLang;
        }
@@ -186,8 +198,16 @@
     } catch (error) {
       // Handle errors during data loading
       console.error("Failed to load data:", error);
-      showLoadingError(`Error loading data: ${error.message}. Check network and file paths.`);
-      throw error; // Re-throw error to be caught by init()
+      // Try to fallback to English if the selected language failed
+      if (lang !== 'en') {
+          console.warn(`Falling back to English due to error loading ${lang}.`);
+          showLoadingError(`Error loading ${lang}, falling back to English.`);
+          await loadConfigAndLocale('en'); // Attempt to load English instead
+      } else {
+          // If English itself failed, show a fatal error
+          showLoadingError(`Critical Error: Failed to load English data: ${error.message}. Check network and file paths.`);
+          throw error; // Re-throw error to be caught by init()
+      }
     }
   }
 
@@ -219,7 +239,7 @@
       try {
           // Fetch the new language file
           const localeRes = await fetch(`locales/${lang}.json`);
-          if (!localeRes.ok) throw new Error(`Locale fetch failed: ${localeRes.status}`);
+          if (!localeRes.ok) throw new Error(`Locale fetch failed for ${lang}: ${localeRes.status}`);
           localeData = await localeRes.json(); // Update locale data
 
           // Update state and localStorage
@@ -227,7 +247,7 @@
           localStorage.setItem('preferredLang', lang);
           if (htmlEl) htmlEl.lang = lang;
 
-          // ADDED: Ensure dropdown reflects the change (though usually triggered by user)
+          // Ensure dropdown reflects the change (though usually triggered by user)
           if (languageSelectEl && languageSelectEl.value !== currentLang) {
              languageSelectEl.value = currentLang;
           }
@@ -250,7 +270,9 @@
       } catch (error) {
           // Handle errors during language switching
           console.error(`Failed to switch language to ${lang}:`, error);
-          showLoadingError(`Failed to switch language: ${error.message}`);
+          showLoadingError(`Failed to switch language: ${error.message}. Check file exists.`);
+          // Optionally, revert dropdown if switch fails?
+          // if (languageSelectEl) languageSelectEl.value = currentLang; // Revert to previous lang
       }
   }
 
@@ -292,7 +314,7 @@
             else el.title = translation ?? `Missing: ${keyPath}`; // Set title attribute for others
        });
 
-       // Update answer annotations specifically (could be merged with data-i18n if structure allows)
+       // Update answer annotations specifically
        if (answerAnnotations) {
            answerAnnotations.forEach(span => {
                const keyPath = span.getAttribute('data-i18n'); // Re-using data-i18n here
@@ -335,7 +357,7 @@
            }
        });
 
-       // ADDED: Ensure dropdown value matches current language after potential updates
+       // Ensure dropdown value matches current language after potential updates
        if (languageSelectEl && languageSelectEl.value !== currentLang) {
          languageSelectEl.value = currentLang;
        }
@@ -346,7 +368,7 @@
   // --- Event Listeners ---
   // Sets up click/change handlers for interactive elements
   function setupEventListeners() {
-    // MODIFIED: Check for the new dropdown element instead of old buttons
+    // Check for essential interactive elements
     if (!answerButtons || !languageSelectEl || !backButton || !prevButton) {
         console.error("Cannot set up listeners: one or more button/select elements not found.");
         return;
@@ -357,11 +379,9 @@
       button.addEventListener('click', handleAnswerClick);
     });
 
-    // REMOVED: Listeners for the old language buttons
-
-    // ADDED: Add change listener to the language dropdown
+    // Add change listener to the language dropdown
     languageSelectEl.addEventListener('change', (event) => {
-        // Call switchLanguage with the selected value ('en' or 'zh')
+        // Call switchLanguage with the selected value ('en', 'zh', 'es', 'pt')
         switchLanguage(event.target.value);
     });
 
@@ -466,7 +486,7 @@
     const questionKey = `q${originalIndex}`; // Key used in localeData.questions (e.g., "q0", "q1")
 
     // Get the translated question text, fallback to English text if translation missing
-    const questionText = localeData.questions[questionKey] ?? (questionData.question || "Question text missing");
+    const questionText = localeData.questions[questionKey] ?? (questions[originalIndex]?.question || "Question text missing"); // Fallback to original questions.json if locale fails
     // Format the "Question x / y" label
     const labelText = `${localeData.questionLabel || 'Question'} ${index + 1} / ${shuffledQuestions.length}`;
 
@@ -622,13 +642,14 @@
       if (!labels || labels.length !== 7) return ""; // Return empty if labels are missing
 
       const val = parseFloat(score); // Ensure score is a number
-      // Determine the label based on score ranges (0-100, higher score means closer to the "left" or "top" label)
-      // Note: These ranges are based on the original 8values, adjust if needed.
+      // Determine the label based on score ranges (0-100)
+      // Note: These ranges match the original 8values implementation.
+      // Higher score (closer to 100) means closer to the "left/top" label (index 0).
       if (val > 100) { return ""; } // Should not happen with clamping
       else if (val >= 90) { return labels[0]; } // e.g., Communist
       else if (val >= 75) { return labels[1]; } // e.g., Socialist
       else if (val >= 60) { return labels[2]; } // e.g., Social
-      else if (val >= 40) { return labels[3]; } // e.g., Centrist
+      else if (val >= 40) { return labels[3]; } // e.g., Centrist/Balanced/Moderate/Neutral
       else if (val >= 25) { return labels[4]; } // e.g., Market
       else if (val >= 10) { return labels[5]; } // e.g., Capitalist
       else if (val >= 0)  { return labels[6]; } // e.g., Laissez-Faire
@@ -668,10 +689,10 @@
     console.log("Closest Ideology Match:", closestIdeology);
 
     // --- Update UI to show results ---
-    // Hide questions/answers, hide dots
+    // Hide questions/answers, keep dots visible for context
     if (answersWrapperEl) answersWrapperEl.style.display = 'none';
-//    if (dotEconGovt) dotEconGovt.style.display = 'none';
-//    if (dotDiplScty) dotDiplScty.style.display = 'none';
+    // if (dotEconGovt) dotEconGovt.style.display = 'none'; // Keep dots visible
+    // if (dotDiplScty) dotDiplScty.style.display = 'none'; // Keep dots visible
 
     // Update question area to show completion message
     if(questionLabel) questionLabel.innerText = localeData.completeMessage || "Complete!";
@@ -711,10 +732,11 @@
     setBarValue(barProgress, valProgress, progressScore);
 
     // --- Update Axis Labels (Descriptive terms like "Socialist") ---
+    // Note: Pass the score corresponding to the "left/top" side (index 0) of the axis labels array
     if(labelEcon) labelEcon.innerText = getAxisLabel(equalityScore, 'econ');
-    if(labelDipl) labelDipl.innerText = getAxisLabel(globeScore, 'dipl'); // Note: Dipl score maps to Globe side
-    if(labelGovt) labelGovt.innerText = getAxisLabel(libertyScore, 'govt');
-    if(labelScty) labelScty.innerText = getAxisLabel(progressScore, 'scty');
+    if(labelDipl) labelDipl.innerText = getAxisLabel(globeScore, 'dipl'); // Globe corresponds to index 0 for dipl
+    if(labelGovt) labelGovt.innerText = getAxisLabel(libertyScore, 'govt'); // Liberty corresponds to index 0 for govt
+    if(labelScty) labelScty.innerText = getAxisLabel(progressScore, 'scty'); // Progress corresponds to index 0 for scty
 
   }
 
@@ -729,6 +751,7 @@
       if (!ideology.stats) return; // Skip if ideology has no stats defined
       const ideologyScores = ideology.stats;
       // Calculate squared Euclidean distance in 4D space (econ, dipl, govt, scty)
+      // Ensure all values are numbers before calculation
       const distSq = (
         Math.pow(Number(userScores.econ || 0) - Number(ideologyScores.econ || 0), 2) +
         Math.pow(Number(userScores.dipl || 0) - Number(ideologyScores.dipl || 0), 2) +

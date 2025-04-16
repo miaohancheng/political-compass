@@ -1,7 +1,6 @@
 # 8values Political Compass Test / 8values 政治坐标测试
 
 [![Political Compass Logo](src/images/political-compass-logo.svg)](https://miaohancheng.github.io/political-compass/src/)
-
 **(English)**
 
 This project is an implementation of the 8values political compass test. It assesses your political alignment across four different axes based on your answers to a series of questions. The results are displayed visually on two charts and through percentage bars, along with the closest matching political ideology from a predefined list.
@@ -22,7 +21,7 @@ This project is an implementation of the 8values political compass test. It asse
     * Diplomatic vs. Societal
 * **Detailed Results Page:** Shows percentage scores for each pole of the four axes using progress bars and provides descriptive labels for your overall position on each axis.
 * **Ideology Matching:** Calculates the closest political ideology based on your scores using Euclidean distance in 4D space. Provides names and descriptions for many ideologies.
-* **Multi-language Support:** Currently supports English (en) and Chinese (zh), dynamically loaded based on user selection or browser preference.
+* **Multi-language Support:** Currently supports **English (en), Chinese (zh), Spanish (es), and Portuguese (pt)**, dynamically loaded based on user selection or browser preference. *(Updated)*
 * **Question Shuffling:** Presents questions in a random order for each test taker.
 * **Previous Question Button:** Allows users to go back and change their answer to the previous question.
 * **Responsive Design:** Adapts to different screen sizes, from mobile to desktop.
@@ -36,7 +35,7 @@ This project is an implementation of the 8values political compass test. It asse
     * 外交 vs. 社会
 * **详细结果页面:** 使用进度条显示四个坐标轴上每个极端的百分比得分，并为每个轴上的总体立场提供描述性标签。
 * **意识形态匹配:** 使用四维空间中的欧几里得距离计算与您的分数最接近的政治意识形态。提供多种意识形态的名称和描述。
-* **多语言支持:** 目前支持英语（en）和中文（zh），根据用户选择或浏览器偏好动态加载。
+* **多语言支持:** 目前支持**英语（en）、中文（zh）、西班牙语（es）和葡萄牙语（pt）**，根据用户选择或浏览器偏好动态加载。 *(已更新)*
 * **问题随机排序:** 为每位测试者随机排列问题顺序。
 * **“返回”按钮:** 允许用户返回并修改上一题的答案。
 * **响应式设计:** 适应从移动设备到桌面设备的不同屏幕尺寸。
@@ -46,11 +45,13 @@ This project is an implementation of the 8values political compass test. It asse
 
 ## 📸 Screenshots / 截图
 
+
 *Example Question Page / 问题页面示例:*
-![Question Example](src/images/question-sample.png)
+![Question Example](./src/images/question-sample.png)
+*(Note: This might be an old screenshot, update if needed / 注意: 这可能是旧截图，请按需更新)*
 
 *Example Results Page / 结果页面示例:*
-![Chart Example](src/images/result-sample.png)
+![Chart Example](./src/images/result-sample.png)
 
 ---
 
@@ -102,3 +103,10 @@ This project is an implementation of the 8values political compass test. It asse
 2.  进入 `src/` 目录。
 3.  在您的网页浏览器中打开 `index.html` 文件。
 
+---
+
+## 👤 Author / 作者
+
+* **miaohancheng** - [GitHub Profile](https://github.com/miaohancheng)
+
+---
