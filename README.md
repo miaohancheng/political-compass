@@ -1,6 +1,6 @@
 # 8values Political Compass Test / 8values 政治坐标测试
 
-[![Political Compass Logo](src/images/political-compass-logo.svg)](https://miaohancheng.github.io/political-compass/src/)
+[![Political Compass Logo](images/political-compass-logo.svg)](https://miaohancheng.github.io/political-compass/src/)
 **(English)**
 
 This project is an implementation of the 8values political compass test. It assesses your political alignment across four different axes based on your answers to a series of questions. The results are displayed visually on two charts and through percentage bars, along with the closest matching political ideology from a predefined list.
@@ -47,11 +47,11 @@ This project is an implementation of the 8values political compass test. It asse
 
 
 *Example Question Page / 问题页面示例:*
-![Question Example](./src/images/question-sample.png)
+![Question Example](images/question-sample.png)
 *(Note: This might be an old screenshot, update if needed / 注意: 这可能是旧截图，请按需更新)*
 
 *Example Results Page / 结果页面示例:*
-![Chart Example](./src/images/result-sample.png)
+![Chart Example](images/result-sample.png)
 
 ---
 
