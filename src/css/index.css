@@ -553,7 +553,7 @@ button img {
     background-color: #fff;
     border: 1px solid #f0f0f0; /* Light border */
     border-radius: 4px;
-    overflow: hidden; /* Clip canvas drawing */
+    overflow: hidden; /* Clip canvas drawing AND the dot */
 }
 
 /* Canvas element itself */
@@ -572,8 +572,9 @@ button img {
   transform: translate(-50%, -50%); /* Precise centering */
   transition: left .3s ease-out, top .3s ease-out; /* Animate movement */
   z-index: 1; /* Ensure dot is above canvas grid */
-  width: 2rem; /* Size of the dot */
-  height: 2rem;
+  /* Reduced dot size */
+  width: 1.5rem; /* Smaller base size */
+  height: 1.5rem; /* Smaller base size */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -670,7 +671,11 @@ button img {
     /* REMOVED desktop style for test-introduction */
     /* .test-introduction { font-size: 1.05rem; } */
     .input .answers button { padding: 1rem; } /* Slightly larger answer buttons */
-    .chart-area .dot { width: 2.2rem; height: 2.2rem; } /* Slightly larger dot */
+    /* Slightly larger dot on large screens */
+    .chart-area .dot {
+        width: 1.7rem; /* Slightly larger */
+        height: 1.7rem; /* Slightly larger */
+    }
     #language-select {
         font-size: 1rem; /* Slightly larger dropdown font */
     }
