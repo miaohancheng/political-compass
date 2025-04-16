@@ -76,11 +76,23 @@
   let questions = []; // Stores all questions from config/questions.json
   let shuffledQuestions = []; // Stores questions in a random order for the quiz
   let ideologies = []; // Stores all ideologies from config/ideologies.json
-  let currentLang = 'en'; // Tracks the currently selected language ('en', 'zh', 'es', 'pt')
+  let currentLang = 'en'; // Tracks the currently selected language
   let localeData = {}; // Stores the loaded language strings
   let userAnswers = {}; // Stores the user's cumulative scores for each axis
   let scoreHistory = []; // Stores previous score states to allow going back
   const maxScores = { econ: 0, dipl: 0, govt: 0, scty: 0 }; // Stores the maximum possible absolute score for each axis
+  let availableLanguages = []; // Stores codes of languages with available locale files
+
+  // --- Configuration ---
+  // Define supported languages and their display names
+  // Add or remove languages here as needed. The code will check if the corresponding .json file exists.
+  const supportedLanguages = [
+      { code: 'en', name: 'English' },
+      { code: 'zh', name: '中文' },
+      { code: 'es', name: 'Español' },
+      { code: 'pt', name: 'Português' }
+      // Add more languages here, e.g.: { code: 'fr', name: 'Français' }
+  ];
 
   // --- Constants for scoring ---
   // Maps button data-value attributes to numerical multipliers
@@ -92,34 +104,113 @@
     '-1.0': -1.0  // Strongly Disagree
   };
 
+  // --- Dynamic Language Dropdown Population ---
+  async function populateLanguageDropdown() {
+      if (!languageSelectEl) return;
+      languageSelectEl.innerHTML = ''; // Clear existing options
+      availableLanguages = []; // Reset the list of available languages
+
+      // Create promises to check for each language file
+      const checks = supportedLanguages.map(async (lang) => {
+          try {
+              const response = await fetch(`locales/${lang.code}.json`);
+              if (response.ok) {
+                  return lang; // Return the language object if file exists
+              } else {
+                  console.warn(`Locale file for ${lang.name} (${lang.code}.json) not found or failed to load (${response.status}).`);
+                  return null;
+              }
+          } catch (error) {
+              console.warn(`Error fetching locale file for ${lang.name} (${lang.code}.json):`, error);
+              return null;
+          }
+      });
+
+      // Wait for all checks to complete
+      const results = await Promise.all(checks);
+
+      // Populate dropdown with available languages
+      results.forEach(lang => {
+          if (lang) {
+              availableLanguages.push(lang.code); // Add code to available list
+              const option = document.createElement('option');
+              option.value = lang.code;
+              option.textContent = lang.name;
+              languageSelectEl.appendChild(option);
+          }
+      });
+
+      // Ensure English is always an option if available (as a fallback)
+      if (!availableLanguages.includes('en')) {
+          const enLang = supportedLanguages.find(l => l.code === 'en');
+          if (enLang) {
+             // If English wasn't found initially but is in supportedLanguages, try one more time
+             try {
+                const response = await fetch(`locales/en.json`);
+                if (response.ok) {
+                    availableLanguages.push('en');
+                    const option = document.createElement('option');
+                    option.value = 'en';
+                    option.textContent = enLang.name;
+                    languageSelectEl.appendChild(option); // Consider adding it first or last
+                    console.log("Ensured English option is available.");
+                }
+             } catch (e) { /* Ignore error if English still fails */}
+          }
+      }
+      // Ensure at least one option exists, default to English if dropdown is empty
+      if (languageSelectEl.options.length === 0) {
+          console.error("No language files found! Adding English as default.");
+          const option = document.createElement('option');
+          option.value = 'en';
+          option.textContent = 'English';
+          languageSelectEl.appendChild(option);
+          availableLanguages.push('en');
+      }
+
+
+      console.log("Available languages detected:", availableLanguages);
+  }
+
+
   // --- Initialization ---
   // This function runs when the page is fully loaded
   async function init() {
     getDOMElements(); // Get references to all needed elements
     // Basic check if essential elements exist
-    if (!loadingErrorEl || !htmlEl) {
+    if (!loadingErrorEl || !htmlEl || !languageSelectEl) {
         console.error("Essential DOM elements not found. Aborting.");
         alert("Error initializing page.");
         return;
     }
     showLoadingError(null); // Hide any previous error messages
 
+    // --- Populate Language Dropdown Dynamically ---
+    await populateLanguageDropdown(); // Wait for dropdown to be populated
+
     // --- Determine initial language ---
     // 1. Check localStorage
     let preferredLang = localStorage.getItem('preferredLang');
+    // Ensure preferredLang from storage is actually available
+    if (preferredLang && !availableLanguages.includes(preferredLang)) {
+        preferredLang = null; // Reset if saved language is no longer available
+        localStorage.removeItem('preferredLang');
+    }
+
     // 2. Check browser language (navigator.language or navigator.languages)
     if (!preferredLang && navigator.language) {
-        const browserLang = navigator.language.toLowerCase().split('-')[0]; // Get primary language code (e.g., 'en', 'zh', 'es', 'pt')
-        if (['en', 'zh', 'es', 'pt'].includes(browserLang)) { // Check if it's one of the supported languages
+        const browserLang = navigator.language.toLowerCase().split('-')[0];
+        // Check if the browser language is in our *available* list
+        if (availableLanguages.includes(browserLang)) {
             preferredLang = browserLang;
         }
     }
-    // 3. Default to 'en'
-    currentLang = preferredLang || 'en';
+    // 3. Default to 'en' if available, otherwise the first available language
+    currentLang = preferredLang || (availableLanguages.includes('en') ? 'en' : availableLanguages[0]);
     // --- End of Language Determination ---
 
 
-    // Set the initial selected option in the dropdown
+    // Set the initial selected option in the dropdown *after* determining currentLang
     if (languageSelectEl) {
         languageSelectEl.value = currentLang;
     }
@@ -179,7 +270,7 @@
       localStorage.setItem('preferredLang', lang);
       if (htmlEl) htmlEl.lang = lang; // Set lang attribute on <html> tag
 
-       // Ensure dropdown reflects the newly loaded language
+       // Ensure dropdown reflects the newly loaded language (might be redundant now, but safe)
        if (languageSelectEl && languageSelectEl.value !== currentLang) {
            languageSelectEl.value = currentLang;
        }
@@ -198,14 +289,15 @@
     } catch (error) {
       // Handle errors during data loading
       console.error("Failed to load data:", error);
-      // Try to fallback to English if the selected language failed
-      if (lang !== 'en') {
+      // Try to fallback to English if the selected language failed AND English is available
+      if (lang !== 'en' && availableLanguages.includes('en')) {
           console.warn(`Falling back to English due to error loading ${lang}.`);
           showLoadingError(`Error loading ${lang}, falling back to English.`);
           await loadConfigAndLocale('en'); // Attempt to load English instead
       } else {
-          // If English itself failed, show a fatal error
-          showLoadingError(`Critical Error: Failed to load English data: ${error.message}. Check network and file paths.`);
+          // If English itself failed or isn't available, show a critical error
+          showLoadingError(`Critical Error: Failed to load base language data (${lang}): ${error.message}. Check network and file paths.`);
+          // Potentially disable the quiz here?
           throw error; // Re-throw error to be caught by init()
       }
     }
@@ -234,7 +326,7 @@
   // --- Language Switching ---
   // Called when the user selects a different language from the dropdown
   async function switchLanguage(lang) {
-      if (lang === currentLang) return; // Do nothing if the language is already selected
+      if (lang === currentLang || !availableLanguages.includes(lang)) return; // Do nothing if same lang or lang not available
       console.log(`Switching language to: ${lang}`);
       try {
           // Fetch the new language file
@@ -247,7 +339,7 @@
           localStorage.setItem('preferredLang', lang);
           if (htmlEl) htmlEl.lang = lang;
 
-          // Ensure dropdown reflects the change (though usually triggered by user)
+          // Ensure dropdown reflects the change (might be redundant)
           if (languageSelectEl && languageSelectEl.value !== currentLang) {
              languageSelectEl.value = currentLang;
           }
@@ -283,7 +375,7 @@
           console.warn("Locale data not available for translations.");
           return;
       }
-      // Ensure elements are available (might be called before init finishes in edge cases)
+      // Ensure elements are available
       if (!mainTitleEl) getDOMElements();
 
       // Update page title and meta description
@@ -297,27 +389,27 @@
       // Update main heading
       if (mainTitleEl) mainTitleEl.innerText = localeData.mainTitle || "8values Test";
 
-      // Update elements with data-i18n attribute (simple text replacement)
+      // Update elements with data-i18n attribute
       document.querySelectorAll('[data-i18n]').forEach(el => {
           const key = el.getAttribute('data-i18n');
           el.innerText = localeData?.[key] ?? `Missing: ${key}`;
       });
 
-      // Update elements with data-i18n-alt (for image alt text or element titles)
+      // Update elements with data-i18n-alt
        document.querySelectorAll('[data-i18n-alt]').forEach(el => {
             const keyPath = el.getAttribute('data-i18n-alt');
-            const keys = keyPath.split('.'); // Allows nested keys like "answerAlt.stronglyDisagree"
+            const keys = keyPath.split('.');
             let translation = localeData;
-            try { keys.forEach(k => { translation = translation[k]; }); } catch (e) { translation = null; } // Safely access nested keys
+            try { keys.forEach(k => { translation = translation[k]; }); } catch (e) { translation = null; }
             const img = el.querySelector('img');
-            if (img) img.alt = translation ?? `Missing: ${keyPath}`; // Set alt text for images
-            else el.title = translation ?? `Missing: ${keyPath}`; // Set title attribute for others
+            if (img) img.alt = translation ?? `Missing: ${keyPath}`;
+            else el.title = translation ?? `Missing: ${keyPath}`;
        });
 
-       // Update answer annotations specifically
+       // Update answer annotations
        if (answerAnnotations) {
            answerAnnotations.forEach(span => {
-               const keyPath = span.getAttribute('data-i18n'); // Re-using data-i18n here
+               const keyPath = span.getAttribute('data-i18n');
                if (!keyPath) return;
                const keys = keyPath.split('.');
                let translation = localeData;
@@ -331,9 +423,9 @@
       if (backButton && localeData.backButton) backButton.innerText = localeData.backButton;
       if (prevButton && localeData.prevButton) prevButton.innerText = localeData.prevButton;
 
-      // Update axis hover tips (data-tooltip attribute)
+      // Update axis hover tips
       if (localeData.axisTips) {
-          const tipElements = { // Map keys in localeData.axisTips to element variables
+          const tipElements = {
               tipEquality: tipEquality, tipMarket: tipMarket, tipNation: tipNation,
               tipGlobe: tipGlobe, tipLiberty: tipLiberty, tipAuthority: tipAuthority,
               tipTradition: tipTradition, tipProgress: tipProgress
@@ -342,14 +434,14 @@
               const element = tipElements[key];
               const tipText = localeData.axisTips[key];
               if (element) {
-                  element.setAttribute('data-tooltip', tipText || ''); // Set the tooltip text
+                  element.setAttribute('data-tooltip', tipText || '');
               }
           }
       } else {
           console.warn("localeData.axisTips object not found.");
       }
 
-      // Update result axis labels (bar chart titles like "Economic Axis")
+      // Update result axis titles
        document.querySelectorAll('[data-i18n^="axis"]').forEach(el => {
            const key = el.getAttribute('data-i18n');
            if (localeData[key]) {
@@ -357,7 +449,7 @@
            }
        });
 
-       // Ensure dropdown value matches current language after potential updates
+       // Ensure dropdown value matches current language
        if (languageSelectEl && languageSelectEl.value !== currentLang) {
          languageSelectEl.value = currentLang;
        }
@@ -381,7 +473,7 @@
 
     // Add change listener to the language dropdown
     languageSelectEl.addEventListener('change', (event) => {
-        // Call switchLanguage with the selected value ('en', 'zh', 'es', 'pt')
+        // Call switchLanguage with the selected value
         switchLanguage(event.target.value);
     });
 
@@ -394,12 +486,9 @@
   // Shuffles an array in place
   function shuffleArray(array) {
       let currentIndex = array.length, randomIndex;
-      // While there remain elements to shuffle.
       while (currentIndex !== 0) {
-          // Pick a remaining element.
           randomIndex = Math.floor(Math.random() * currentIndex);
           currentIndex--;
-          // And swap it with the current element.
           [array[currentIndex], array[randomIndex]] = [
               array[randomIndex], array[currentIndex]];
       }
