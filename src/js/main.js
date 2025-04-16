@@ -113,7 +113,8 @@
       // Create promises to check for each language file
       const checks = supportedLanguages.map(async (lang) => {
           try {
-              const response = await fetch(`locales/${lang.code}.json`);
+              // Use HEAD request for efficiency to just check existence
+              const response = await fetch(`locales/${lang.code}.json`, { method: 'HEAD' });
               if (response.ok) {
                   return lang; // Return the language object if file exists
               } else {
@@ -121,8 +122,17 @@
                   return null;
               }
           } catch (error) {
-              console.warn(`Error fetching locale file for ${lang.name} (${lang.code}.json):`, error);
-              return null;
+              // Network errors or CORS issues might occur
+              console.warn(`Error checking locale file for ${lang.name} (${lang.code}.json):`, error);
+              // Attempt a GET request as a fallback check in case HEAD is disallowed
+              try {
+                  const getResponse = await fetch(`locales/${lang.code}.json`);
+                  if (getResponse.ok) return lang;
+                  else return null;
+              } catch (getError) {
+                  console.warn(`GET request also failed for ${lang.code}.json:`, getError);
+                  return null;
+              }
           }
       });
 
@@ -141,33 +151,33 @@
       });
 
       // Ensure English is always an option if available (as a fallback)
-      if (!availableLanguages.includes('en')) {
+      // Check if 'en' is supported and not already found
+      if (!availableLanguages.includes('en') && supportedLanguages.some(l => l.code === 'en')) {
           const enLang = supportedLanguages.find(l => l.code === 'en');
-          if (enLang) {
-             // If English wasn't found initially but is in supportedLanguages, try one more time
-             try {
-                const response = await fetch(`locales/en.json`);
-                if (response.ok) {
-                    availableLanguages.push('en');
-                    const option = document.createElement('option');
-                    option.value = 'en';
-                    option.textContent = enLang.name;
-                    languageSelectEl.appendChild(option); // Consider adding it first or last
-                    console.log("Ensured English option is available.");
-                }
-             } catch (e) { /* Ignore error if English still fails */}
-          }
+          try {
+             // Check if en.json actually exists
+             const response = await fetch(`locales/en.json`, { method: 'HEAD' }); // Or GET
+             if (response.ok) {
+                 availableLanguages.push('en');
+                 const option = document.createElement('option');
+                 option.value = 'en';
+                 option.textContent = enLang.name;
+                 // Prepend English to make it the default visually if no other language is detected
+                 languageSelectEl.prepend(option);
+                 console.log("Ensured English option is available.");
+             }
+          } catch (e) { console.warn("Could not verify English locale file existence:", e); }
       }
+
       // Ensure at least one option exists, default to English if dropdown is empty
       if (languageSelectEl.options.length === 0) {
-          console.error("No language files found! Adding English as default.");
+          console.error("No language files found or accessible! Adding English as default.");
           const option = document.createElement('option');
           option.value = 'en';
-          option.textContent = 'English';
+          option.textContent = 'English'; // Default name if lookup failed
           languageSelectEl.appendChild(option);
           availableLanguages.push('en');
       }
-
 
       console.log("Available languages detected:", availableLanguages);
   }
@@ -217,7 +227,15 @@
 
     try {
         // Load question/ideology data and the determined language's text
-        await loadConfigAndLocale(currentLang);
+        await loadConfigAndLocale(currentLang); // Load initial data
+
+        // *** ADDED: Dispatch event AFTER initial load ***
+        console.log("Dispatching initial languageChanged event for:", currentLang);
+        window.dispatchEvent(new CustomEvent('languageChanged', {
+            detail: { localeData: localeData }
+        }));
+        // *** END ADDED ***
+
         // Set up event listeners for buttons and dropdown
         setupEventListeners();
         // Start the quiz (shuffle questions, load the first one)
@@ -294,6 +312,8 @@
           console.warn(`Falling back to English due to error loading ${lang}.`);
           showLoadingError(`Error loading ${lang}, falling back to English.`);
           await loadConfigAndLocale('en'); // Attempt to load English instead
+          // Return here to avoid dispatching event for the failed language
+          return; // Important: prevent further execution in the original caller's try block for the failed lang
       } else {
           // If English itself failed or isn't available, show a critical error
           showLoadingError(`Critical Error: Failed to load base language data (${lang}): ${error.message}. Check network and file paths.`);
@@ -347,15 +367,16 @@
           applyTranslations(); // Update all text on the page
 
           // Dispatch a custom event so other scripts (like chart.js) know the language changed
+          console.log("Dispatching languageChanged event for:", lang);
           window.dispatchEvent(new CustomEvent('languageChanged', { detail: { localeData: localeData } }));
 
           // If the quiz is finished, re-render the results page in the new language
           if (shuffledQuestions && currentQuestionIndex >= shuffledQuestions.length) {
-              showResults();
+              showResults(); // showResults itself calls applyTranslations implicitly via ideology lookup etc.
           }
           // If the quiz is in progress, reload the current question text
           else if (shuffledQuestions && shuffledQuestions.length > 0) {
-              loadQuestion(currentQuestionIndex);
+              loadQuestion(currentQuestionIndex); // loadQuestion calls applyTranslations implicitly
           }
 
           console.log(`Language switched to ${lang}`);
@@ -376,7 +397,7 @@
           return;
       }
       // Ensure elements are available
-      if (!mainTitleEl) getDOMElements();
+      if (!mainTitleEl) getDOMElements(); // Get elements if not already done
 
       // Update page title and meta description
       document.title = localeData.title || 'Political Compass Test';
@@ -392,6 +413,11 @@
       // Update elements with data-i18n attribute
       document.querySelectorAll('[data-i18n]').forEach(el => {
           const key = el.getAttribute('data-i18n');
+          // Safely access nested keys if needed (though not used here currently)
+          // const keys = key.split('.');
+          // let translation = localeData;
+          // try { keys.forEach(k => { translation = translation[k]; }); } catch (e) { translation = null; }
+          // el.innerText = translation ?? `Missing: ${key}`;
           el.innerText = localeData?.[key] ?? `Missing: ${key}`;
       });
 
@@ -441,20 +467,20 @@
           console.warn("localeData.axisTips object not found.");
       }
 
-      // Update result axis titles
-       document.querySelectorAll('[data-i18n^="axis"]').forEach(el => {
+      // Update result axis titles (e.g., "Economic Axis")
+       document.querySelectorAll('[data-i18n^="axisEconomic"], [data-i18n^="axisDiplomatic"], [data-i18n^="axisCivil"], [data-i18n^="axisSocietal"]').forEach(el => {
            const key = el.getAttribute('data-i18n');
            if (localeData[key]) {
                el.innerText = localeData[key];
            }
        });
 
-       // Ensure dropdown value matches current language
+       // Ensure dropdown value matches current language (belt-and-suspenders)
        if (languageSelectEl && languageSelectEl.value !== currentLang) {
          languageSelectEl.value = currentLang;
        }
 
-      console.log("Translations applied for language:", currentLang);
+      // console.log("Translations applied for language:", currentLang); // Reduce log noise
   }
 
   // --- Event Listeners ---
@@ -504,6 +530,12 @@
     resetQuizState(); // Clear scores, history, etc.
 
     // Create an array of objects, each containing the question data and its original index
+    // Make sure 'questions' is loaded before starting
+    if (!questions || questions.length === 0) {
+        console.error("Questions not loaded. Cannot start quiz.");
+        showLoadingError("Error: Questions data missing.");
+        return;
+    }
     const questionsWithIndices = questions.map((q, index) => ({
         questionData: q, originalIndex: index
     }));
@@ -575,7 +607,9 @@
     const questionKey = `q${originalIndex}`; // Key used in localeData.questions (e.g., "q0", "q1")
 
     // Get the translated question text, fallback to English text if translation missing
-    const questionText = localeData.questions[questionKey] ?? (questions[originalIndex]?.question || "Question text missing"); // Fallback to original questions.json if locale fails
+    // Ensure 'questions' array is populated for fallback
+    const fallbackText = (questions && questions[originalIndex]) ? questions[originalIndex].question : "Question text missing";
+    const questionText = localeData.questions[questionKey] ?? fallbackText;
     // Format the "Question x / y" label
     const labelText = `${localeData.questionLabel || 'Question'} ${index + 1} / ${shuffledQuestions.length}`;
 
@@ -751,6 +785,13 @@
   function showResults() {
     console.log("Quiz complete. Calculating final results.");
     console.log("Final Raw Scores:", userAnswers);
+
+     // Ensure localeData is loaded before proceeding
+     if (!localeData || Object.keys(localeData).length === 0) {
+         console.error("Cannot show results: localeData not loaded.");
+         showLoadingError("Error displaying results: Language data missing.");
+         return;
+     }
 
      // Normalize raw scores to a 0-100 scale for each axis
      const finalScores = {
