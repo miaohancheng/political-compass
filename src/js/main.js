@@ -1,7 +1,8 @@
 (function() {
   // --- DOM Elements ---
   // Declare variables for frequently accessed DOM elements
-  let mainTitleEl, dotEconGovt, dotDiplScty,
+  let mainTitleEl, mainTitleTextSpan, // Added mainTitleTextSpan
+      dotEconGovt, dotDiplScty,
       questionLabel, questionTitle, answersContainer, answerButtons,
       answerAnnotations, resultsArea, ideologyResultEl, resultsTitleEl,
       languageSelectEl, // Variable for the language dropdown
@@ -19,6 +20,7 @@
   // Function to get references to DOM elements after the page loads
   function getDOMElements() {
       mainTitleEl = document.getElementById('main-title');
+      mainTitleTextSpan = document.getElementById('main-title-text'); // Get the inner span
       dotEconGovt = document.getElementById('dot-econ-govt'); // Target dot on the first chart
       dotDiplScty = document.getElementById('dot-dipl-scty'); // Target dot on the second chart
       questionLabel = document.getElementById('question-label'); // "Question x / y"
@@ -229,12 +231,11 @@
         // Load question/ideology data and the determined language's text
         await loadConfigAndLocale(currentLang); // Load initial data
 
-        // *** ADDED: Dispatch event AFTER initial load ***
+        // Dispatch event AFTER initial load
         console.log("Dispatching initial languageChanged event for:", currentLang);
         window.dispatchEvent(new CustomEvent('languageChanged', {
             detail: { localeData: localeData }
         }));
-        // *** END ADDED ***
 
         // Set up event listeners for buttons and dropdown
         setupEventListeners();
@@ -397,7 +398,7 @@
           return;
       }
       // Ensure elements are available
-      if (!mainTitleEl) getDOMElements(); // Get elements if not already done
+      if (!mainTitleEl || !mainTitleTextSpan) getDOMElements(); // Get elements if not already done
 
       // Update page title and meta description
       document.title = localeData.title || 'Political Compass Test';
@@ -407,17 +408,28 @@
           metaDescriptionEl.setAttribute('content', 'Take the 8values political compass test.');
       }
 
-      // Update main heading
-      if (mainTitleEl) mainTitleEl.innerText = localeData.mainTitle || "8values Test";
+      // Update main heading text AND its tooltip span
+      if (mainTitleEl) {
+          // Get the text for the title itself (might be inside the span or directly in h1 depending on HTML structure)
+          const titleText = localeData.mainTitle || "8values Test";
+          // Check if the span exists and set its text, otherwise set H1 text
+          if (mainTitleTextSpan) {
+             mainTitleTextSpan.innerText = titleText;
+             // Set the data-tooltip attribute for the title span
+             mainTitleTextSpan.dataset.tooltip = localeData.testIntro || "";
+          } else {
+             // Fallback if span structure isn't used (shouldn't happen with updated HTML)
+             mainTitleEl.innerText = titleText;
+             mainTitleEl.dataset.tooltip = localeData.testIntro || "";
+          }
+      }
 
-      // Update elements with data-i18n attribute
-      document.querySelectorAll('[data-i18n]').forEach(el => {
+      // Update elements with data-i18n attribute (excluding the main title span now handled above)
+      document.querySelectorAll('[data-i18n]:not(#main-title-text)').forEach(el => {
+          // Avoid setting innerText on the H1 if the span is handling it
+          if (el.id === 'main-title' && mainTitleTextSpan) return;
+
           const key = el.getAttribute('data-i18n');
-          // Safely access nested keys if needed (though not used here currently)
-          // const keys = key.split('.');
-          // let translation = localeData;
-          // try { keys.forEach(k => { translation = translation[k]; }); } catch (e) { translation = null; }
-          // el.innerText = translation ?? `Missing: ${key}`;
           el.innerText = localeData?.[key] ?? `Missing: ${key}`;
       });
 
@@ -449,7 +461,7 @@
       if (backButton && localeData.backButton) backButton.innerText = localeData.backButton;
       if (prevButton && localeData.prevButton) prevButton.innerText = localeData.prevButton;
 
-      // Update axis hover tips
+      // Update axis hover tips (data-tooltip attribute for axis labels)
       if (localeData.axisTips) {
           const tipElements = {
               tipEquality: tipEquality, tipMarket: tipMarket, tipNation: tipNation,
@@ -459,8 +471,9 @@
           for (const key in localeData.axisTips) {
               const element = tipElements[key];
               const tipText = localeData.axisTips[key];
+              // Use dataset property for consistency
               if (element) {
-                  element.setAttribute('data-tooltip', tipText || '');
+                  element.dataset.tooltip = tipText || '';
               }
           }
       } else {
@@ -845,7 +858,7 @@
         const ideologyDescription = (localeData.ideologyDescriptions && localeData.ideologyDescriptions[ideologyNameKey])
                                     ? localeData.ideologyDescriptions[ideologyNameKey]
                                     : (localeData.ideologyDescriptions?.Unknown || "Description not available."); // Fallback description
-        ideologyResultEl.setAttribute('data-tooltip', ideologyDescription); // Set tooltip content
+        ideologyResultEl.dataset.tooltip = ideologyDescription; // Use dataset property
     }
     // Update the "Your closest match:" text
     if (resultsTitleEl && localeData.resultsTitle) resultsTitleEl.innerText = localeData.resultsTitle;

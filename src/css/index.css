@@ -33,12 +33,25 @@ h1 {
 
 /* Main title specific style */
 .main-title {
-    text-align: center;
+    text-align: center; /* Ensures the inner span is centered */
     font-size: 2rem;
     margin-top: 0; /* Reset margin */
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem; /* Adjusted margin-bottom */
     color: #132a59;
 }
+
+/* Style for the span inside the title to trigger tooltip */
+.title-tooltip-trigger {
+    display: inline-block; /* Allows positioning and border */
+    position: relative; /* Needed for tooltip positioning */
+    cursor: help; /* Indicate interactivity */
+    border-bottom: 1px dashed #aaa; /* Visual cue like axis labels */
+    padding-bottom: 0.1em; /* Small space for underline */
+}
+
+/* REMOVED Introduction text style */
+/* .test-introduction { ... } */
+
 
 /* Axis explanations text style */
 .axis-explanations {
@@ -55,41 +68,59 @@ h1 {
     border-bottom: 1px dashed #aaa; /* Visual cue */
     padding: 0 2px;
     position: relative; /* Needed for tooltip positioning */
+    display: inline-block; /* Ensure proper positioning */
 }
 
-/* --- Custom Tooltip Styles for Axis Labels --- */
+/* --- Custom Tooltip Styles (Applied to .axis-label and .title-tooltip-trigger) --- */
 /* Tooltip arrow */
-.axis-label::before {
+.axis-label::before,
+.title-tooltip-trigger::before {
     content: '';
     position: absolute;
-    bottom: 100%; /* Position above the label */
+    /* Position arrow below the element for title, above for axis labels */
+    top: 100%; /* Default for title span */
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 5px;
-    border-width: 5px;
+    margin-top: 5px; /* Space below element */
+    border-width: 6px; /* Slightly larger arrow */
     border-style: solid;
-    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent; /* Arrow pointing down */
+    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent; /* Arrow pointing up */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
     z-index: 10;
     pointer-events: none; /* Allow clicking through the arrow */
 }
+/* Adjust arrow position for axis labels (which are smaller) */
+.axis-label::before {
+    top: auto; /* Reset top */
+    bottom: 100%; /* Position above */
+    margin-top: 0;
+    margin-bottom: 5px; /* Space above element */
+    border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent; /* Arrow pointing down */
+    border-width: 5px; /* Keep original size */
+}
+
 /* Tooltip text box */
-.axis-label::after {
+.axis-label::after,
+.title-tooltip-trigger::after {
     content: attr(data-tooltip); /* Get text from data-tooltip attribute */
     position: absolute;
-    bottom: 100%; /* Position above the label */
+    /* Position tooltip below the element for title, above for axis labels */
+    top: 100%; /* Default for title span */
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 10px; /* Space above the arrow */
-    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    margin-top: 11px; /* Space below the arrow for title */
+    background-color: rgba(0, 0, 0, 0.85); /* Slightly darker background */
     color: #fff; /* White text */
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 0.85rem;
+    padding: 10px 15px; /* More padding */
+    border-radius: 5px; /* Slightly more rounded */
+    font-size: 0.9rem; /* Consistent font size */
+    font-weight: normal; /* Ensure normal weight */
+    line-height: 1.5; /* Good line height for readability */
     white-space: normal; /* Allow text wrapping */
-    width: 200px; /* Fixed width */
+    width: 300px; /* Default width for title tooltip */
+    max-width: 80vw; /* Prevent overflow on small screens */
     text-align: left;
     opacity: 0; /* Hidden by default */
     visibility: hidden;
@@ -97,13 +128,26 @@ h1 {
     z-index: 10;
     pointer-events: none; /* Allow clicking through the tooltip */
 }
+/* Adjust tooltip position and width for axis labels */
+.axis-label::after {
+    top: auto; /* Reset top */
+    bottom: 100%; /* Position above */
+    margin-top: 0;
+    margin-bottom: 10px; /* Space above the arrow */
+    width: 220px; /* Keep original width or adjust as needed */
+    font-size: 0.85rem; /* Keep original size */
+    padding: 8px 12px; /* Keep original padding */
+}
+
 /* Show tooltip on hover */
 .axis-label:hover::before,
-.axis-label:hover::after {
+.axis-label:hover::after,
+.title-tooltip-trigger:hover::before,
+.title-tooltip-trigger:hover::after {
     opacity: 1;
     visibility: visible;
 }
-/* --- End Axis Label Tooltip Styles --- */
+/* --- End Tooltip Styles --- */
 
 /* Smaller heading style */
 h4 {
@@ -563,7 +607,9 @@ button img {
       margin-bottom: 2rem;
       margin-top: 0; /* Reset top margin for desktop */
   }
-  .main-title { font-size: 2.5rem; margin-bottom: 2rem; }
+  .main-title { font-size: 2.5rem; /* Keep size */ margin-bottom: 1.5rem; } /* Restore bottom margin */
+  /* REMOVED desktop style for test-introduction */
+  /* .test-introduction { font-size: 1rem; margin-bottom: 2rem; } */
   .logo img { height: 40px; }
 
   /* Adjust GitHub icon position for desktop */
@@ -621,9 +667,15 @@ button img {
 @media (min-width: 64rem) {
     h1 { font-size: 1.8rem; }
     .main-title { font-size: 2.8rem; }
+    /* REMOVED desktop style for test-introduction */
+    /* .test-introduction { font-size: 1.05rem; } */
     .input .answers button { padding: 1rem; } /* Slightly larger answer buttons */
     .chart-area .dot { width: 2.2rem; height: 2.2rem; } /* Slightly larger dot */
     #language-select {
         font-size: 1rem; /* Slightly larger dropdown font */
+    }
+    /* Adjust title tooltip width for larger screens */
+    .title-tooltip-trigger::after {
+        width: 350px; /* Wider tooltip on large screens */
     }
 }

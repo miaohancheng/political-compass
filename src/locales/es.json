@@ -2,6 +2,7 @@
   "title": "Test de Compás Político 8values - Encuentra Tu Ideología",
   "description": "Realiza el test político 8values para descubrir tu posición. Responde preguntas sobre Economía, Diplomacia, Estado y Sociedad para ver tus puntuaciones y encontrar tu ideología política.",
   "mainTitle": "Test Político 8values",
+  "testIntro": "Evalúa la posición de un individuo en ocho dimensiones políticas diferentes haciendo que el usuario exprese acuerdo o desacuerdo con una serie de declaraciones que cubren dominios políticos, económicos, diplomáticos y sociales. La prueba desglosa principalmente las opiniones políticas en múltiples dimensiones, como igualdad económica vs. libertad de mercado, nacionalismo vs. globalismo, libertad vs. autoridad y tradición vs. progreso. Estas dimensiones ayudan a los usuarios a definir claramente su postura política más allá del mapa político bipolar tradicional.",
   "questionLabel": "Pregunta",
   "completeMessage": "¡Completado!",
   "allAnsweredMessage": "Todas las preguntas respondidas.",

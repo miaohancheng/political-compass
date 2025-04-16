@@ -2,6 +2,7 @@
   "title": "8values Political Compass Test - Find Your Ideology",
   "description": "Take the 8values political test to find out where you stand. Answer questions on Economics, Diplomacy, State, and Society to see your scores and get matched with a political ideology.",
   "mainTitle": "8values Political Test",
+  "testIntro": "Assesses an individual's position on eight different political dimensions by having the user express agreement or disagreement with a series of statements covering political, economic, diplomatic, and social domains. The test primarily breaks down political views into multiple dimensions such as economic equality vs. market freedom, nationalism vs. globalism, liberty vs. authority, and tradition vs. progress. These dimensions help users clearly define their political stance beyond the traditional bipolar political map.",
   "questionLabel": "Question",
   "completeMessage": "Complete!",
   "allAnsweredMessage": "All questions answered.",
