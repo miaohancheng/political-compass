@@ -90,14 +90,16 @@
   // Add or remove languages here as needed. The code will check if the corresponding .json file exists.
   const supportedLanguages = [
       { code: 'en', name: 'English' },
-      { code: 'zh', name: '中文' },
+      { code: 'zh', name: '简体中文' },
       { code: 'es', name: 'Español' },
       { code: 'pt', name: 'Português' },
       { code: 'jp', name: '日本語' },
       { code: 'kr', name: '한국어' },
       { code: 'de', name: 'Deutsch'},
       { code: 'fr', name: 'Français' },
-      { code: 'ru', name: 'Русский' }
+      { code: 'ru', name: 'Русский' },
+      { code: 'ar', name: 'العربية' },
+      { code: 'zh-t', name: '繁體中文' }
       // Add more languages here, e.g.: { code: 'fr', name: 'Français' }
   ];
 
