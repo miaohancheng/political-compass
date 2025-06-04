@@ -92,7 +92,12 @@
       { code: 'en', name: 'English' },
       { code: 'zh', name: '中文' },
       { code: 'es', name: 'Español' },
-      { code: 'pt', name: 'Português' }
+      { code: 'pt', name: 'Português' },
+      { code: 'jp', name: '日本語' },
+      { code: 'kr', name: '한국어' },
+      { code: 'de', name: 'Deutsch'},
+      { code: 'fr', name: 'Français' },
+      { code: 'ru', name: 'Русский' }
       // Add more languages here, e.g.: { code: 'fr', name: 'Français' }
   ];
 
