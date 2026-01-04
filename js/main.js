@@ -742,7 +742,7 @@
      // Econ maps to X-axis (0=Left/Equality, 100=Right/Market)
      // Govt maps to Y-axis (0=Top/Authority, 100=Bottom/Liberty)
      // CSS left/top percentages range from 0% to 100%
-     const positionX1 = (currentScores.econ / 100); // 0 to 1
+    const positionX1 = 1 - (currentScores.econ / 100); // 0 to 1
      const positionY1 = (currentScores.govt / 100); // 0 to 1 (0=Top, 1=Bottom)
      dotEconGovt.style.left = positionX1 * 100 + '%';
      dotEconGovt.style.top = positionY1 * 100 + '%'; // CSS top increases downwards
