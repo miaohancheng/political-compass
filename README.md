@@ -49,7 +49,6 @@ This project is an implementation of the 8values political compass test. It asse
 
 *Example Question Page / 问题页面示例:*
 ![Question Example](images/question-sample.png)
-*(Note: This might be an old screenshot, update if needed / 注意: 这可能是旧截图，请按需更新)*
 
 *Example Results Page / 结果页面示例:*
 ![Chart Example](images/result-sample.png)
