@@ -1,6 +1,6 @@
 # 8values Political Compass Test / 8values 政治坐标测试
 
-[![Political Compass Logo](images/political-compass-logo.svg)](https://miaohancheng.github.io/political-compass/src/)
+[![Political Compass Logo](images/political-compass-logo.svg)](https://miaohancheng.github.io/political-compass/)
 
 **(English)**
 
@@ -22,7 +22,7 @@ This project is an implementation of the 8values political compass test. It asse
     * Diplomatic vs. Societal
 * **Detailed Results Page:** Shows percentage scores for each pole of the four axes using progress bars and provides descriptive labels for your overall position on each axis.
 * **Ideology Matching:** Calculates the closest political ideology based on your scores using Euclidean distance in 4D space. Provides names and descriptions for many ideologies.
-* **Multi-language Support:** Currently supports **English (en), Chinese (zh), Spanish (es), and Portuguese (pt)**, dynamically loaded based on user selection or browser preference. *(Updated)*
+* **Multi-language Support:** Currently supports **English (en), Simplified Chinese (zh), Traditional Chinese (zh-Hant), Spanish (es), Portuguese (pt), Japanese (ja), Korean (ko), German (de), French (fr), Russian (ru), and Arabic (ar)**. Language is selected by user choice or browser preference.
 * **Question Shuffling:** Presents questions in a random order for each test taker.
 * **Previous Question Button:** Allows users to go back and change their answer to the previous question.
 * **Responsive Design:** Adapts to different screen sizes, from mobile to desktop.
@@ -36,7 +36,7 @@ This project is an implementation of the 8values political compass test. It asse
     * 外交 vs. 社会
 * **详细结果页面:** 使用进度条显示四个坐标轴上每个极端的百分比得分，并为每个轴上的总体立场提供描述性标签。
 * **意识形态匹配:** 使用四维空间中的欧几里得距离计算与您的分数最接近的政治意识形态。提供多种意识形态的名称和描述。
-* **多语言支持:** 目前支持**英语（en）、中文（zh）、西班牙语（es）和葡萄牙语（pt）**，根据用户选择或浏览器偏好动态加载。 *(已更新)*
+* **多语言支持:** 目前支持**英语（en）、简体中文（zh）、繁體中文（zh-Hant）、西班牙语（es）、葡萄牙语（pt）、日语（ja）、韩语（ko）、德语（de）、法语（fr）、俄语（ru）和阿拉伯语（ar）**，根据用户选择或浏览器偏好动态加载。
 * **问题随机排序:** 为每位测试者随机排列问题顺序。
 * **“返回”按钮:** 允许用户返回并修改上一题的答案。
 * **响应式设计:** 适应从移动设备到桌面设备的不同屏幕尺寸。
@@ -94,14 +94,82 @@ This project is an implementation of the 8values political compass test. It asse
 **(English)**
 
 1.  Clone or download this repository.
-2.  Navigate to the `src/` directory.
-3.  Open the `index.html` file in your web browser.
+2.  Navigate to the project root directory.
+3.  Start a local HTTP server (required, because the app loads JSON files via `fetch`):
+
+    ```bash
+    python3 -m http.server 8080
+    ```
+
+4.  Open `http://localhost:8080/` in your browser.
+5.  Do not use `file://.../index.html`, otherwise locale/config files may fail to load.
 
 **(中文)**
 
 1.  克隆或下载此代码仓库。
-2.  进入 `src/` 目录。
-3.  在您的网页浏览器中打开 `index.html` 文件。
+2.  进入项目根目录。
+3.  启动本地 HTTP 服务（必须使用 HTTP，因为页面通过 `fetch` 加载 JSON 文件）：
+
+    ```bash
+    python3 -m http.server 8080
+    ```
+
+4.  在浏览器中打开 `http://localhost:8080/`。
+5.  不要直接用 `file://.../index.html` 打开，否则语言与配置文件可能加载失败。
+
+---
+
+## ✅ Data Validation / 数据校验
+
+**(English)**
+
+Run the data consistency validator locally:
+
+```bash
+node scripts/validate_data.js
+```
+
+It validates:
+
+* question count consistency
+* locale key completeness against `locales/en.json`
+* ideology key consistency between `config/ideologies.json` and locale files
+
+**(中文)**
+
+可在本地执行以下命令进行数据一致性校验：
+
+```bash
+node scripts/validate_data.js
+```
+
+主要校验项：
+
+* 题目数量一致性
+* 各语言文件相对 `locales/en.json` 的键完整性
+* `config/ideologies.json` 与各语言意识形态键一致性
+
+---
+
+## 🔒 External Script Allowlist / 外部脚本白名单
+
+**(English)**
+
+Allowed third-party/external scripts currently used by this project:
+
+* `https://miaohancheng.com/donate-page/sample1/donate-embed.js` (donation widget)
+* `https://www.googletagmanager.com/gtag/js` (Google Analytics loader)
+
+Planned hardening: add a CSP in report-only mode first, then enforce after validating reports.
+
+**(中文)**
+
+当前项目允许的外部脚本：
+
+* `https://miaohancheng.com/donate-page/sample1/donate-embed.js`（捐赠组件）
+* `https://www.googletagmanager.com/gtag/js`（Google Analytics 加载器）
+
+后续安全加固计划：先启用 CSP Report-Only，再根据报告逐步收紧为强制模式。
 
 ---
 

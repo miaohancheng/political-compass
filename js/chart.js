@@ -1,6 +1,14 @@
 (function() {
     let currentLocaleData = {}; // Store locale data
     let animationFrameId = null; // For debouncing resize
+    const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1'
+        || localStorage.getItem('pc_debug') === '1';
+
+    function debugLog(...args) {
+        if (DEBUG) {
+            console.log(...args);
+        }
+    }
 
     // Get both canvas elements
     const canvas1 = document.getElementById('chart-econ-govt');
@@ -15,10 +23,10 @@
 
     // Listen for language changes from main.js
     window.addEventListener('languageChanged', (event) => {
-        console.log("Chart.js received language change event."); // Log event receipt
+        debugLog("Chart.js received language change event."); // Log event receipt
         if (event.detail && event.detail.localeData) {
             currentLocaleData = event.detail.localeData;
-            console.log("Chart.js updated localeData, redrawing charts.");
+            debugLog("Chart.js updated localeData, redrawing charts.");
             drawBothCharts(); // Redraw both charts with new labels
         } else {
             console.warn("Chart.js received languageChanged event without localeData.");

@@ -19,6 +19,10 @@ body {
   padding: 1rem; /* Padding around the container */
 }
 
+html[dir="rtl"] body {
+  direction: rtl;
+}
+
 /* Heading styles */
 h1, h2, h3, h4, h5 {
   color: #132a59; /* Dark blue color for headings */
@@ -216,6 +220,10 @@ button img {
     position: relative;
     z-index: 10;
     margin-top: 0.5rem; /* Adjusted top margin */
+}
+
+html[dir="rtl"] .header {
+    flex-direction: row-reverse;
 }
 
 /* Language Dropdown Container - Part of Flexbox */
@@ -433,6 +441,12 @@ button img {
 #ideology-result:hover::after {
     opacity: 1;
     visibility: visible;
+}
+
+html[dir="rtl"] .axis-label::after,
+html[dir="rtl"] .title-tooltip-trigger::after,
+html[dir="rtl"] #ideology-result::after {
+    text-align: right;
 }
 /* --- End Ideology Tooltip Styles --- */
 

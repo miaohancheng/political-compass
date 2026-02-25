@@ -5,7 +5,7 @@
       dotEconGovt, dotDiplScty,
       questionLabel, questionTitle, answersContainer, answerButtons,
       answerAnnotations, resultsArea, ideologyResultEl, resultsTitleEl,
-      languageSelectEl, // Variable for the language dropdown
+      languageSelectEl, logoLink, // Variable for the language dropdown
       backButton, prevButton, loadingErrorEl, htmlEl, metaDescriptionEl,
       tipEquality, tipMarket, tipNation, tipGlobe, tipLiberty, tipAuthority, tipTradition, tipProgress,
       answersWrapperEl,
@@ -33,6 +33,7 @@
       ideologyResultEl = document.getElementById('ideology-result'); // H1 showing the matched ideology
       resultsTitleEl = document.getElementById('resultsTitle'); // "Your closest match:" text
       languageSelectEl = document.getElementById('language-select'); // Get the language dropdown
+      logoLink = document.getElementById('logo-link');
       backButton = document.getElementById('back-button'); // "Back to Start" button
       prevButton = document.getElementById('prev-button'); // "Back" (previous question) button
       loadingErrorEl = document.getElementById('loading-error'); // Element to display errors
@@ -83,25 +84,43 @@
   let userAnswers = {}; // Stores the user's cumulative scores for each axis
   let scoreHistory = []; // Stores previous score states to allow going back
   const maxScores = { econ: 0, dipl: 0, govt: 0, scty: 0 }; // Stores the maximum possible absolute score for each axis
-  let availableLanguages = []; // Stores codes of languages with available locale files
+  let availableLanguages = []; // Stores supported language codes
 
   // --- Configuration ---
-  // Define supported languages and their display names
-  // Add or remove languages here as needed. The code will check if the corresponding .json file exists.
+  // Define supported languages and file mappings.
   const supportedLanguages = [
-      { code: 'en', name: 'English' },
-      { code: 'zh', name: '简体中文' },
-      { code: 'es', name: 'Español' },
-      { code: 'pt', name: 'Português' },
-      { code: 'jp', name: '日本語' },
-      { code: 'kr', name: '한국어' },
-      { code: 'de', name: 'Deutsch'},
-      { code: 'fr', name: 'Français' },
-      { code: 'ru', name: 'Русский' },
-      { code: 'ar', name: 'العربية' },
-      { code: 'zh-t', name: '繁體中文' }
-      // Add more languages here, e.g.: { code: 'fr', name: 'Français' }
+      { code: 'en', file: 'en', name: 'English' },
+      { code: 'zh', file: 'zh', name: '简体中文' },
+      { code: 'es', file: 'es', name: 'Español' },
+      { code: 'pt', file: 'pt', name: 'Português' },
+      { code: 'ja', file: 'jp', name: '日本語' },
+      { code: 'ko', file: 'kr', name: '한국어' },
+      { code: 'de', file: 'de', name: 'Deutsch' },
+      { code: 'fr', file: 'fr', name: 'Français' },
+      { code: 'ru', file: 'ru', name: 'Русский' },
+      { code: 'ar', file: 'ar', name: 'العربية' },
+      { code: 'zh-Hant', file: 'zh-t', name: '繁體中文' }
   ];
+
+  const languageAliasMap = {
+      'jp': 'ja',
+      'ja-jp': 'ja',
+      'kr': 'ko',
+      'ko-kr': 'ko',
+      'zh-t': 'zh-Hant',
+      'zh-hant': 'zh-Hant',
+      'zh-tw': 'zh-Hant',
+      'zh-hk': 'zh-Hant',
+      'zh-mo': 'zh-Hant'
+  };
+  const canonicalLanguageMap = new Map(
+      supportedLanguages.map(lang => [lang.code.toLowerCase(), lang.code])
+  );
+  const localeFileMap = Object.fromEntries(
+      supportedLanguages.map(lang => [lang.code, lang.file])
+  );
+  const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1'
+      || localStorage.getItem('pc_debug') === '1';
 
   // --- Constants for scoring ---
   // Maps button data-value attributes to numerical multipliers
@@ -113,82 +132,68 @@
     '-1.0': -1.0  // Strongly Disagree
   };
 
+  function debugLog(...args) {
+      if (DEBUG) {
+          console.log(...args);
+      }
+  }
+
+  function normalizeLangCode(rawCode) {
+      if (!rawCode || typeof rawCode !== 'string') return 'en';
+
+      const normalizedRaw = rawCode.trim().replace(/_/g, '-');
+      if (!normalizedRaw) return 'en';
+      const lowered = normalizedRaw.toLowerCase();
+
+      if (languageAliasMap[lowered]) {
+          return languageAliasMap[lowered];
+      }
+      if (canonicalLanguageMap.has(lowered)) {
+          return canonicalLanguageMap.get(lowered);
+      }
+
+      const [base, region] = lowered.split('-');
+      if (base === 'zh') {
+          if (region === 'tw' || region === 'hk' || region === 'mo' || region === 'hant') {
+              return 'zh-Hant';
+          }
+          return 'zh';
+      }
+      if (base === 'ja') return 'ja';
+      if (base === 'ko') return 'ko';
+      if (canonicalLanguageMap.has(base)) {
+          return canonicalLanguageMap.get(base);
+      }
+      return 'en';
+  }
+
+  function getLocalePathForLang(langCode) {
+      const normalizedLang = normalizeLangCode(langCode);
+      const fileCode = localeFileMap[normalizedLang] || localeFileMap.en;
+      return `locales/${fileCode}.json`;
+  }
+
+  function setDocumentLanguageAttributes(langCode) {
+      if (!htmlEl) return;
+      const normalizedLang = normalizeLangCode(langCode);
+      htmlEl.lang = normalizedLang;
+      htmlEl.dir = normalizedLang === 'ar' ? 'rtl' : 'ltr';
+  }
+
   // --- Dynamic Language Dropdown Population ---
-  async function populateLanguageDropdown() {
+  function populateLanguageDropdown() {
       if (!languageSelectEl) return;
-      languageSelectEl.innerHTML = ''; // Clear existing options
-      availableLanguages = []; // Reset the list of available languages
+      languageSelectEl.innerHTML = '';
+      availableLanguages = supportedLanguages.map(lang => lang.code);
 
-      // Create promises to check for each language file
-      const checks = supportedLanguages.map(async (lang) => {
-          try {
-              // Use HEAD request for efficiency to just check existence
-              const response = await fetch(`locales/${lang.code}.json`, { method: 'HEAD' });
-              if (response.ok) {
-                  return lang; // Return the language object if file exists
-              } else {
-                  console.warn(`Locale file for ${lang.name} (${lang.code}.json) not found or failed to load (${response.status}).`);
-                  return null;
-              }
-          } catch (error) {
-              // Network errors or CORS issues might occur
-              console.warn(`Error checking locale file for ${lang.name} (${lang.code}.json):`, error);
-              // Attempt a GET request as a fallback check in case HEAD is disallowed
-              try {
-                  const getResponse = await fetch(`locales/${lang.code}.json`);
-                  if (getResponse.ok) return lang;
-                  else return null;
-              } catch (getError) {
-                  console.warn(`GET request also failed for ${lang.code}.json:`, getError);
-                  return null;
-              }
-          }
-      });
-
-      // Wait for all checks to complete
-      const results = await Promise.all(checks);
-
-      // Populate dropdown with available languages
-      results.forEach(lang => {
-          if (lang) {
-              availableLanguages.push(lang.code); // Add code to available list
-              const option = document.createElement('option');
-              option.value = lang.code;
-              option.textContent = lang.name;
-              languageSelectEl.appendChild(option);
-          }
-      });
-
-      // Ensure English is always an option if available (as a fallback)
-      // Check if 'en' is supported and not already found
-      if (!availableLanguages.includes('en') && supportedLanguages.some(l => l.code === 'en')) {
-          const enLang = supportedLanguages.find(l => l.code === 'en');
-          try {
-             // Check if en.json actually exists
-             const response = await fetch(`locales/en.json`, { method: 'HEAD' }); // Or GET
-             if (response.ok) {
-                 availableLanguages.push('en');
-                 const option = document.createElement('option');
-                 option.value = 'en';
-                 option.textContent = enLang.name;
-                 // Prepend English to make it the default visually if no other language is detected
-                 languageSelectEl.prepend(option);
-                 console.log("Ensured English option is available.");
-             }
-          } catch (e) { console.warn("Could not verify English locale file existence:", e); }
-      }
-
-      // Ensure at least one option exists, default to English if dropdown is empty
-      if (languageSelectEl.options.length === 0) {
-          console.error("No language files found or accessible! Adding English as default.");
+      supportedLanguages.forEach(lang => {
           const option = document.createElement('option');
-          option.value = 'en';
-          option.textContent = 'English'; // Default name if lookup failed
+          option.value = lang.code;
+          option.textContent = lang.name;
           languageSelectEl.appendChild(option);
-          availableLanguages.push('en');
-      }
+      });
 
-      console.log("Available languages detected:", availableLanguages);
+      debugLog("Available languages configured:", availableLanguages);
   }
 
 
@@ -205,11 +210,12 @@
     showLoadingError(null); // Hide any previous error messages
 
     // --- Populate Language Dropdown Dynamically ---
-    await populateLanguageDropdown(); // Wait for dropdown to be populated
+    populateLanguageDropdown();
 
     // --- Determine initial language ---
     // 1. Check localStorage
-    let preferredLang = localStorage.getItem('preferredLang');
+    const storedLang = localStorage.getItem('preferredLang');
+    let preferredLang = storedLang ? normalizeLangCode(storedLang) : null;
     // Ensure preferredLang from storage is actually available
     if (preferredLang && !availableLanguages.includes(preferredLang)) {
         preferredLang = null; // Reset if saved language is no longer available
@@ -217,12 +223,14 @@
     }
 
     // 2. Check browser language (navigator.language or navigator.languages)
-    if (!preferredLang && navigator.language) {
-        const browserLang = navigator.language.toLowerCase().split('-')[0];
-        // Check if the browser language is in our *available* list
-        if (availableLanguages.includes(browserLang)) {
-            preferredLang = browserLang;
-        }
+    if (!preferredLang) {
+        const browserCandidates = [
+            ...(Array.isArray(navigator.languages) ? navigator.languages : []),
+            navigator.language
+        ].filter(Boolean);
+        preferredLang = browserCandidates
+            .map(candidate => normalizeLangCode(candidate))
+            .find(candidate => availableLanguages.includes(candidate)) || null;
     }
     // 3. Default to 'en' if available, otherwise the first available language
     currentLang = preferredLang || (availableLanguages.includes('en') ? 'en' : availableLanguages[0]);
@@ -239,7 +247,7 @@
         await loadConfigAndLocale(currentLang); // Load initial data
 
         // Dispatch event AFTER initial load
-        console.log("Dispatching initial languageChanged event for:", currentLang);
+        debugLog("Dispatching initial languageChanged event for:", currentLang);
         window.dispatchEvent(new CustomEvent('languageChanged', {
             detail: { localeData: localeData }
         }));
@@ -271,20 +279,22 @@
   // --- Data Loading ---
   // Fetches questions.json, ideologies.json, and the specified locale file
   async function loadConfigAndLocale(lang) {
-    console.log(`Loading config and locale for: ${lang}`);
-    showLoadingError(`Loading data for ${lang}...`); // Show loading message
+    const normalizedLang = normalizeLangCode(lang);
+    const localePath = getLocalePathForLang(normalizedLang);
+    debugLog(`Loading config and locale for: ${normalizedLang}`);
+    showLoadingError(`Loading data for ${normalizedLang}...`); // Show loading message
     try {
       // Fetch all three files concurrently
       const [questionsRes, ideologiesRes, localeRes] = await Promise.all([
         fetch('config/questions.json'),
         fetch('config/ideologies.json'),
-        fetch(`locales/${lang}.json`) // Fetch the specific language file
+        fetch(localePath) // Fetch the specific language file
       ]);
 
       // Check if fetches were successful
       if (!questionsRes.ok) throw new Error(`Questions fetch failed: ${questionsRes.status}`);
       if (!ideologiesRes.ok) throw new Error(`Ideologies fetch failed: ${ideologiesRes.status}`);
-      if (!localeRes.ok) throw new Error(`Locale fetch failed for ${lang}: ${localeRes.status}`); // Improved error message
+      if (!localeRes.ok) throw new Error(`Locale fetch failed for ${normalizedLang}: ${localeRes.status}`); // Improved error message
 
       // Parse JSON data
       questions = await questionsRes.json();
@@ -292,9 +302,9 @@
       localeData = await localeRes.json();
 
       // Update state and localStorage
-      currentLang = lang;
-      localStorage.setItem('preferredLang', lang);
-      if (htmlEl) htmlEl.lang = lang; // Set lang attribute on <html> tag
+      currentLang = normalizedLang;
+      localStorage.setItem('preferredLang', currentLang);
+      setDocumentLanguageAttributes(currentLang);
 
        // Ensure dropdown reflects the newly loaded language (might be redundant now, but safe)
        if (languageSelectEl && languageSelectEl.value !== currentLang) {
@@ -309,22 +319,22 @@
       }
 
       applyTranslations(); // Update all text elements on the page
-      console.log("Data loaded successfully:", { questions_count: questions.length, ideologies_count: ideologies.length, locale: lang });
+      debugLog("Data loaded successfully:", { questions_count: questions.length, ideologies_count: ideologies.length, locale: currentLang });
       showLoadingError(null); // Hide loading message
 
     } catch (error) {
       // Handle errors during data loading
       console.error("Failed to load data:", error);
       // Try to fallback to English if the selected language failed AND English is available
-      if (lang !== 'en' && availableLanguages.includes('en')) {
-          console.warn(`Falling back to English due to error loading ${lang}.`);
-          showLoadingError(`Error loading ${lang}, falling back to English.`);
+      if (normalizedLang !== 'en' && availableLanguages.includes('en')) {
+          console.warn(`Falling back to English due to error loading ${normalizedLang}.`);
+          showLoadingError(`Error loading ${normalizedLang}, falling back to English.`);
           await loadConfigAndLocale('en'); // Attempt to load English instead
           // Return here to avoid dispatching event for the failed language
           return; // Important: prevent further execution in the original caller's try block for the failed lang
       } else {
           // If English itself failed or isn't available, show a critical error
-          showLoadingError(`Critical Error: Failed to load base language data (${lang}): ${error.message}. Check network and file paths.`);
+          showLoadingError(`Critical Error: Failed to load base language data (${normalizedLang}): ${error.message}. Check network and file paths.`);
           // Potentially disable the quiz here?
           throw error; // Re-throw error to be caught by init()
       }
@@ -333,7 +343,7 @@
 
    // --- Calculate Max Scores ---
    // Determines the maximum possible absolute score deviation for each axis
-   function calculateMaxScores() {
+  function calculateMaxScores() {
         maxScores.econ = 0; maxScores.dipl = 0; maxScores.govt = 0; maxScores.scty = 0;
         // Sum the absolute effect of each question on each axis
         questions.forEach(q => {
@@ -348,24 +358,25 @@
         for (const axis in maxScores) {
             if (maxScores[axis] === 0) maxScores[axis] = 1;
         }
-        console.log("Max scores calculated:", maxScores);
+        debugLog("Max scores calculated:", maxScores);
    }
 
   // --- Language Switching ---
   // Called when the user selects a different language from the dropdown
   async function switchLanguage(lang) {
-      if (lang === currentLang || !availableLanguages.includes(lang)) return; // Do nothing if same lang or lang not available
-      console.log(`Switching language to: ${lang}`);
+      const normalizedLang = normalizeLangCode(lang);
+      if (normalizedLang === currentLang || !availableLanguages.includes(normalizedLang)) return; // Do nothing if same lang or lang not available
+      debugLog(`Switching language to: ${normalizedLang}`);
       try {
           // Fetch the new language file
-          const localeRes = await fetch(`locales/${lang}.json`);
-          if (!localeRes.ok) throw new Error(`Locale fetch failed for ${lang}: ${localeRes.status}`);
+          const localeRes = await fetch(getLocalePathForLang(normalizedLang));
+          if (!localeRes.ok) throw new Error(`Locale fetch failed for ${normalizedLang}: ${localeRes.status}`);
           localeData = await localeRes.json(); // Update locale data
 
           // Update state and localStorage
-          currentLang = lang;
-          localStorage.setItem('preferredLang', lang);
-          if (htmlEl) htmlEl.lang = lang;
+          currentLang = normalizedLang;
+          localStorage.setItem('preferredLang', currentLang);
+          setDocumentLanguageAttributes(currentLang);
 
           // Ensure dropdown reflects the change (might be redundant)
           if (languageSelectEl && languageSelectEl.value !== currentLang) {
@@ -373,9 +384,10 @@
           }
 
           applyTranslations(); // Update all text on the page
+          showLoadingError(null);
 
           // Dispatch a custom event so other scripts (like chart.js) know the language changed
-          console.log("Dispatching languageChanged event for:", lang);
+          debugLog("Dispatching languageChanged event for:", normalizedLang);
           window.dispatchEvent(new CustomEvent('languageChanged', { detail: { localeData: localeData } }));
 
           // If the quiz is finished, re-render the results page in the new language
@@ -387,10 +399,16 @@
               loadQuestion(currentQuestionIndex); // loadQuestion calls applyTranslations implicitly
           }
 
-          console.log(`Language switched to ${lang}`);
+          debugLog(`Language switched to ${normalizedLang}`);
       } catch (error) {
           // Handle errors during language switching
-          console.error(`Failed to switch language to ${lang}:`, error);
+          console.error(`Failed to switch language to ${normalizedLang}:`, error);
+          if (normalizedLang !== 'en' && currentLang !== 'en') {
+              console.warn(`Failed to switch to ${normalizedLang}, falling back to English.`);
+              await switchLanguage('en');
+              showLoadingError(`Failed to switch to ${normalizedLang}. Reverted to English.`);
+              return;
+          }
           showLoadingError(`Failed to switch language: ${error.message}. Check file exists.`);
           // Optionally, revert dropdown if switch fails?
           // if (languageSelectEl) languageSelectEl.value = currentLang; // Revert to previous lang
@@ -507,7 +525,7 @@
   // Sets up click/change handlers for interactive elements
   function setupEventListeners() {
     // Check for essential interactive elements
-    if (!answerButtons || !languageSelectEl || !backButton || !prevButton) {
+    if (!answerButtons || !languageSelectEl || !backButton || !prevButton || !logoLink) {
         console.error("Cannot set up listeners: one or more button/select elements not found.");
         return;
     }
@@ -523,9 +541,17 @@
         switchLanguage(event.target.value);
     });
 
+    logoLink.removeEventListener('click', handleLogoClick);
+    logoLink.addEventListener('click', handleLogoClick);
+
     // Add listeners for Back to Start and Previous Question buttons
     backButton.addEventListener('click', startQuiz);
     prevButton.addEventListener('click', prevQuestion);
+  }
+
+  function handleLogoClick(event) {
+      event.preventDefault();
+      window.location.reload();
   }
 
   // --- Fisher-Yates (Knuth) Shuffle ---
@@ -544,7 +570,7 @@
   // --- Quiz Logic ---
   // Resets the quiz state and starts it
   function startQuiz() {
-    console.log("Starting or resetting quiz.");
+    debugLog("Starting or resetting quiz.");
     if (!answersWrapperEl) getDOMElements(); // Ensure elements are loaded
 
     resetQuizState(); // Clear scores, history, etc.
@@ -561,7 +587,7 @@
     }));
     // Shuffle this array
     shuffledQuestions = shuffleArray(questionsWithIndices);
-    console.log("Questions shuffled.");
+    debugLog("Questions shuffled.");
 
     currentQuestionIndex = 0; // Start from the first shuffled question
     window.location.hash = ''; // Clear any hash from previous results (optional)
@@ -602,7 +628,7 @@
       window.location.hash = ''; // Clear URL hash
       // Remove any 'selected' class from answer buttons (if used)
       if (answerButtons) answerButtons.forEach(btn => btn.classList.remove('selected'));
-      console.log("Quiz state reset.");
+      debugLog("Quiz state reset.");
    }
 
   // Loads and displays the question at the given index
@@ -701,13 +727,13 @@
   // Called when the "Back" button is clicked
   function prevQuestion() {
       if (currentQuestionIndex <= 0) return; // Cannot go back from the first question
-      console.log("Going back to previous question.");
+      debugLog("Going back to previous question.");
       currentQuestionIndex--; // Decrement the question index
 
       // Restore the score state from history
       if (scoreHistory.length > 0) {
           userAnswers = scoreHistory.pop(); // Get the last saved state
-          console.log("Score restored to:", JSON.stringify(userAnswers));
+          debugLog("Score restored to:", JSON.stringify(userAnswers));
       } else {
           // Should not happen if button is correctly disabled, but good to check
           console.warn("Score history empty.");
@@ -803,8 +829,8 @@
   // --- Final Results ---
   // Calculates final scores, finds the closest ideology, and updates the UI
   function showResults() {
-    console.log("Quiz complete. Calculating final results.");
-    console.log("Final Raw Scores:", userAnswers);
+    debugLog("Quiz complete. Calculating final results.");
+    debugLog("Final Raw Scores:", userAnswers);
 
      // Ensure localeData is loaded before proceeding
      if (!localeData || Object.keys(localeData).length === 0) {
@@ -820,7 +846,7 @@
          govt: Math.max(0, Math.min(100, 50 + 50 * (userAnswers.govt / maxScores.govt))),
          scty: Math.max(0, Math.min(100, 50 + 50 * (userAnswers.scty / maxScores.scty)))
      };
-     console.log("Final Normalized Scores (0-100):", finalScores);
+     debugLog("Final Normalized Scores (0-100):", finalScores);
 
      // Calculate the opposing score for each axis (used for the bars)
      // e.g., Market = 100 - Equality
@@ -836,7 +862,7 @@
 
     // Find the ideology with the closest stats to the user's scores
     const closestIdeology = findClosestIdeology(finalScores);
-    console.log("Closest Ideology Match:", closestIdeology);
+    debugLog("Closest Ideology Match:", closestIdeology);
 
     // --- Update UI to show results ---
     // Hide questions/answers, keep dots visible for context
