@@ -157,6 +157,7 @@ node scripts/validate_data.js
 
 Allowed third-party/external scripts currently used by this project:
 
+* `https://code.jquery.com/jquery-3.6.0.min.js` (dependency required by donation widget)
 * `https://miaohancheng.com/donate-page/sample1/donate-embed.js` (donation widget)
 * `https://www.googletagmanager.com/gtag/js` (Google Analytics loader)
 
@@ -166,6 +167,7 @@ Planned hardening: add a CSP in report-only mode first, then enforce after valid
 
 当前项目允许的外部脚本：
 
+* `https://code.jquery.com/jquery-3.6.0.min.js`（捐赠组件依赖）
 * `https://miaohancheng.com/donate-page/sample1/donate-embed.js`（捐赠组件）
 * `https://www.googletagmanager.com/gtag/js`（Google Analytics 加载器）
 
